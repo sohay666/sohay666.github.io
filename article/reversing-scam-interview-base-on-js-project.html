@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- Author : sohai | this code generate by python script -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="liquidity front runner bots">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hello World">
+    <meta property="og:url" content="https://sohainewbie.github.io">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="Reversing Scam Interview base on Js Project">
+    <meta property="og:locale" content="en">
+    <meta name="twitter:title" content="Hello World">
+    <meta name="twitter:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <!-- title -->
+    <title>Reversing Scam Interview base on Js Project</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <style type="text/css">
+        .code-container{
+            background-color: #2f1111;
+            height: 175px;
+            width: 869px;
+            margin-left: 84px;
+        }
+        .code-text{
+            color: #c2af46;
+            margin-left: -68px;
+        }
+    </style>
+</head>
+
+<body>
+  <div >
+    <pre>
+    <span class="style2">  ___ ___                                 .__</span>              
+    <span class="style8"> /   |   \   ____ ___  ___         _______|__| ____   ____ </span> 
+    <span class="style5">/    ~    \_/ __ \\  \/  /  ______ \___   /  |/    \_/ __ \ </span>
+    <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
+    <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
+    <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
+    </pre>    
+    <div class="content-article">
+        <pre>
+            Sebelumnya, saya ingin berbagi pengalaman pribadi mengenai interview yang berujung scam, justru berbahaya untuk kita sendiri
+            karena data kita bisa di curi, secara tidak sadar( Karena interview nya live & share screen dengan orang yang bersangkutan jadi jika 
+            tidak fokus, mungkin bisa saja kita terjebak).Untungnya pada kasus saya si attacker tidak berhasil melancarkan aksinya.Berikut ceritanya.
+
+            Di siang hari yang cerah, saya iseng-iseng buka Linkedin.Ada notifikasi chat oleh seseorang menawarkan
+            untuk posisi sebagai full time remote, berikut chat nya
+             
+            <img src="../images/reversing-scam-interview-base-on-js-project/1.png" style="width: 530px;height: 160px;">
+            
+            Dengan tawaran seperti itu, saya sangat tertarik.Lalu dia membuatkan link untuk tahap interview mengunakan google meet
+
+            <img src="../images/reversing-scam-interview-base-on-js-project/2.png" style="width: 530px;height: 160px;">
+
+            Setelah itu, saya di interview oleh beliau dan menanyakan project apa yang pernah saya kerjakan, Role sebagai apa, Sallary expectation 
+            Lalu, beliau bertanya user github saya, kemudian saya di invite kesebuah project mengunakan nodejs dan dia meminta saya untuk 
+            share screen , karena dia bilang ini tahap screening ( Sejauh ini tidak ada yang mencurigakan ) 
+            
+            <img src="../images/reversing-scam-interview-base-on-js-project/3.png" style="width: 530px;height: 160px;">
+
+            Setelah di invite, saya disuruh baca mengenai project tersebut, dan clone project tsb. 
+
+            <img src="../images/reversing-scam-interview-base-on-js-project/4.png" style="width: 680px;height: 400px;">
+
+            Clone project pun sudah saya lakukan, kemudian saya selalu check fungsi-fungsi berbahaya seperti eval ( why eval ??? coz eval is evil)
+            karena fungsi eval mampu mengeksekusi string sebagai kode. 
+            Jika string tersebut berasal dari sumber yang tidak terpercaya (seperti input pengguna), maka penyerang dapat menyisipkan kode berbahaya untuk dijalankan.
+            bisa membaca lebih lengkap disini atau artikel lainnya <a target="_blank" href="https://javascriptweblog.wordpress.com/2010/04/19/how-evil-is-eval/">how-evil-is-eval</a>
+
+            <img src="../images/reversing-scam-interview-base-on-js-project/5.png" style="width: 880px;height: 200px;">
+
+            Disini saya menyadari ada file yang sangat mencurigakan pada file <span>./server/app.js:152</span> kemudian saya coba check like code tsb
+
+            <img src="../images/reversing-scam-interview-base-on-js-project/6.png" style="width: 500px;height: 470px;">
+            dan benar saja, fungsi tsb di panggil saat calling <span>utils.assets()</span> pada file <span>./server/config/util.js</span>
+
+            <img src="../images/reversing-scam-interview-base-on-js-project/7.png" style="width: 500px;height: 270px;">
+            
+            dan tidak sampai disitu saya cek file <span>./public/models/.svn/bower_components/assets</span>
+            <img src="../images/reversing-scam-interview-base-on-js-project/8.png" style="width: 881px;height: 29px;">
+
+            Kemudian, dalam sesi interview saya hanya bilang ke si interviewer (nice try diddy, kemudian saya end-call)
+
+            kenapa saya langsung end-call ??? 
+            disini ada hal diamana saya curiga code javascript yang di obfuscated seperti tsb.Biasanya code yang di obfuscated itu sengaja agar 
+            code nya itu tidak bisa di baca orang, mungkin karena privasi atau memang isinya malicious code ( memungkinkan untuk mencuri file-file penting di laptop kita)
+            
+            Dalam bahasan ini akan saya bagi menjadi beberapa bagian:
+            1. <a href="#static-analisis">Static Analisis</a>
+            2. <a href="#dynamic-analysis">Dynamic Analysis & Simulasi</a>
+
+            <h1 id="static-analisis" style="width: 180px;margin-left: 87px;">Static Analysis</h1>
+
+            pada revesing kali ini, kita fokuskan pada bagian fungsi javascript yang tadi, file js tsb, saya simpan di <a href="https://gist.githubusercontent.com/sohay666/8089c68a7f28a47d85612ba43a525c2e/raw/7836d0f7de0f2eb9bb01b08988b7a738f7f2b40e/js.malscript" target="_blank">sini</a>
+            code tsb setelah di de-obfuscated bisa di check (namun masih ada beberapa code yang perlu di rapihkan agar tetap bisa di baca) <a href="https://gist.githubusercontent.com/sohay666/238c8bc117ee7ae30f04f73d74527f68/raw/5a0992bf47067d2404f687054b9d7afec8e6d413/js.malscript.dec" target="_blank">sini</a>
+
+            disini ada beberapa fungsi yang saya skip, jadi hanya fungsi penting saja yang saya bahas.
+            <img src="../images/reversing-scam-interview-base-on-js-project/9.png" style="width: 780px;height: 380px;">
+            pada fungsi tsb, <span>_0x3c0bfd</span> terlihat untuk mendapatkan informasi seperti <span>hostname</span>, <span>platform</span>, <span>homedir</span> & <span>tmpdir</span> 
+            kemudian ada initial host <span>http://86.104.74.51:1224</span>
+            jika saya check host tersebut sudah di bikin dari tanggal <span>2024-03-28</span>
+            <img src="../images/reversing-scam-interview-base-on-js-project/10.png" style="width: 780px;height: 580px;">
+
+            seltain itu code yang di obfuscated tadi, akan mengambil data sensitif seperti:
+
+            <span>1.</span><span>Wallet config Solana</span> (Jika anda pemain crypto currency, sudah tidak asing dengan hal ini)
+            <img src="../images/reversing-scam-interview-base-on-js-project/11.png" style="width: 780px;height: 80px;">
+
+            <span>2.</span><span>Firefox</span> (bisa mencuri informasi password yang disimpan di browser Firefox )
+            <img src="../images/reversing-scam-interview-base-on-js-project/12.png" style="width: 780px;height: 80px;">
+
+            <span>3.</span><span>Wallet Exodus</span> (wallet yang digunakan untuk menyimapn crypto )
+            <img src="../images/reversing-scam-interview-base-on-js-project/13.png" style="width: 780px;height: 80px;">
+
+            <span>4.</span><span>Keychain</span> (layaknya password management yang bisa menyimpan informasi seperti password, para pegguna mac pasti sudah tidak asing )
+            <img src="../images/reversing-scam-interview-base-on-js-project/14.png" style="width: 780px;height: 80px;">
+            
+            <span>5.</span><span>Chrome</span>  (bisa mencuri informasi password yang disimpan di browser Chrome)
+            <img src="../images/reversing-scam-interview-base-on-js-project/15.png" style="width: 780px;height: 80px;">
+
+            <span>6.</span> <span>Brave Browser</span> (bisa mencuri informasi password yang disimpan di browser Brave)
+            <img src="../images/reversing-scam-interview-base-on-js-project/16.png" style="width: 780px;height: 80px;">
+
+            <span>7.</span><span>App Data/Config App</span> (akan mengambil beberapa info config pada setiap aplikasi yang di install)
+            <img src="../images/reversing-scam-interview-base-on-js-project/17.png" style="width: 780px;height: 115px;">
+
+            kemudian setelah mendapatkan informasi penting tersebut, akan di upload ke server <span>http://86.104.74.51:1224/uploads</span> 
+            dengan http method <span>POST</span>
+            <img src="../images/reversing-scam-interview-base-on-js-project/18.png" style="width: 780px;height: 180px;">
+
+            <h1 id="dynamic-analysis" style="width: 180px;margin-left: 87px;">Dynamic Analysis</h1>
+            Langkah awal, siapkan VMware atau environtment khusus untuk menghindari serangan, dan ubah host tersebut menjadi localhost,
+            contoh : <span>http://86.104.74.51:1224</span> menjadi <span>http://127.0.0.1:1224</span>, jadi nanti kita bikin localhost server sendiri.
+            dan jangan lupa gunakan <span>debugger</span>.
+
+            <img src="../images/reversing-scam-interview-base-on-js-project/19.png" style="width: 780px;height: 75px;">
+
+            setelah itu buka <span>Chrome DevTools</span> dengan cara mengakses <span>chrome://inspect</span> dan klik <span>Open dedicated DevTools for Node</span>
+            <img src="../images/reversing-scam-interview-base-on-js-project/20.png" style="width: 780px;height: 175px;">
+            setelah itu, otomatis console akan kebuka seperti ini, kemudian klik Step
+            <img src="../images/reversing-scam-interview-base-on-js-project/21.png" style="width: 780px;height: 275px;">
+            bisa kita lihat isi setiap variable 
+
+            <span style="color:#04ebf5">_0x1e3887</span>: <span>sohais-MacBook-Air.local</span> // hostname
+            <span style="color:#04ebf5">_0x20b1f0</span>: <span>darwin</span> // platform
+            <span style="color:#04ebf5">_0x4753a5</span>: <span>/Users/sohai</span> // homedir
+            <span style="color:#04ebf5">_0x171a9c</span>: <span>/var/folders/d_/865r6lh90g5cn8bcy1p99z6m0000gn/T</span> //tmpdir
+
+            setelah itu, mengecall fungsi <span>_0x59c6d8</span> terdapat pengecekan platform, karena platform yang saya gunakan darwin
+            <img src="../images/reversing-scam-interview-base-on-js-project/22.png" style="width: 780px;height: 275px;">
+
+            maka, code melakukan request ke URL <span>http://127.0.0.1:1224/client/5/507</span> karena saya set nya ke localhost, maka sewajarnya 404
+            <img src="../images/reversing-scam-interview-base-on-js-project/23.png" style="width: 780px;height: 75px;">
+
+            namun jika saya ubah request langsung dengan curl dengan host aslinya http://86.104.74.51:1224/client/5/507, 
+            isinya berupa code python yang di encode mengunakan base64 kemudian di compress mengunakan zlib dengan iterasi 50x, dan bahayanya kode tersebut jika di execute
+            dalam compailer python akan lansgung di eksekusi.
+            <img src="../images/reversing-scam-interview-base-on-js-project/24.png" style="width: 780px;height: 275px;">
+
+            hasil decode seperti ini ( selanjutnya akan saya bahas setiap fungsi nya)
+            <img src="../images/reversing-scam-interview-base-on-js-project/26.png" style="width: 780px;height: 775px;">
+            bisa kita lihat terdapat 3 fungsi utama, yakni: 
+            1. <span>download_payload</span>
+            2. <span>download_browse</span>
+            3. <span>download_mclip</span>
+
+            yang nantinya setiap fungsi tersebut akan merequest sebuah file pada host  <span>http://86.104.74.51:1224/</span> kemudian akan menyimpan file tersebut pada homedir 
+            dan di execute secara background.
+
+            1. <span>download_payload</span>
+               melakukan request URL <a target="_blank" href="http://86.104.74.51:1224/client/5/507">http://86.104.74.51:1224/client/5/507</a> file di save pada <span>/homedir/.n2/pay</span> atau <span>/Users/sohai/.n2/pay</span> 
+               setelah itu file tersebut di exekusi. untuk file decode nya bisa di cek <a target="_blank" href="https://gist.githubusercontent.com/sohay666/8d413c8ddb46f1d22c2653fa3968b2b7/raw/5173903cb48e66f3995d05d4b7ecb14e4a578f1d/mal.download_payload.python">disini</a>
+               
+               * ada hal menarik, jika os Darwin maka code tersebut langsung di hentikan / exit.
+            
+            2. <span>download_browse</span>
+               melakukan request URL <span><a target="_blank" href="http://86.104.74.51:1224/brow/5/507">http://86.104.74.51:1224/brow/5/507</a></span> file di save pada <span>/homedir/.n2/bow</span> atau <span>/Users/sohai/.n2/bow</span> 
+               setelah itu file tersebut di exekusi. untuk file decode nya bisa di cek <a target="_blank" href="https://gist.githubusercontent.com/sohay666/454b946ce354aa4e67241904200bea33/raw/64c57e89ccdd0a1422e70a7e6a1e37e530f651bd/mal.download_browse.python">disini</a>
+               jika saya check code merupakan <span style="color:red">malware</span> namun cukup unik untuk mencari payload nya, karena disimpan dalam host pastebin dengan merandom 
+               beberapa list URL kemudian di XOR mengunakan key <span style="color:red">!!!HappyPenguin1950!!!</span> sebagai contoh dari pastebin <span>https://pastebin.com/raw/suEqUQBY</span> 
+               
+               <img src="../images/reversing-scam-interview-base-on-js-project/34.png" style="width: 800px;height: 50px;">
+               jika saya XOR lagi outputnya adalah <span>http://23.254.229.101/cat-video</span> ( saya membuat decodernya bisa di check <a target="_blank" href="https://gist.githubusercontent.com/sohay666/f1abbcdc5bb82b0a32f8f3572791d346/raw/720708ef124683a472eabfb48330b20c805ea6a4/dec">disini</a> )
+
+            3. <span>download_mclip</span>
+               melakukan request URL <span><a target="_blank" href="http://86.104.74.51:1224/mclip/5/507">http://86.104.74.51:1224/mclip/5/507</a></span> file di save pada <span>/homedir/.n2/mlip</span> atau <span>/Users/sohai/.n2/mlip</span> 
+               setelah itu file tersebut di exekusi. untuk file decode nya bisa di cek <a target="_blank" href="https://gist.githubusercontent.com/sohay666/a3f2ed0aee5c00f71a84d8b4da7ef878/raw/68fd3e2b37b07c41500b39f2bc539e81f2339292/mal.download_mclip.python">disini</a>
+               dirancang khusus sebagai keylogger, jika aplikasi seperti <span>chrome.exe & brave.exe</span> running, maka akan merekam setiap ketikan keyboard 
+               kemudian ada pengecheckan ismnemonic ( ini khusus untuk wallet crypto) dengan kata lain, si attacker sengaja mengincar wallet crypto kemudian
+               semua data akan di kirim ke host <span>http://95.164.7.171:8637/api/clip</span> dengan method POST
+
+
+            lanjut ke debugger,
+            jika file tersebut berhasil di download.Maka payload tadi akan disimpan dalam nama file <span>/Users/sohai/.sysinfo</span>
+            lalu akan menge eksekusi file tersebut <span>python3 /Users/sohai/.sysinfo</span>
+            <img src="../images/reversing-scam-interview-base-on-js-project/27.png" style="width: 780px;height: 275px;">
+
+            setelah itu code akan menge call fungsi <span>_0x4e6119()</span>, bisa kita lihat di sebelah tab kanan 
+            code tersebut berhasil mengelisting setiap aplikasi seperti Chrome, Brave, Opera,
+            <img src="../images/reversing-scam-interview-base-on-js-project/28.png" style="width: 780px;height: 295px;">
+            serta beberapa extension plugin pada chrome seperti :
+            <span>[
+                'nkbihfbeogaeaoehlefnkodbefgpgknn',
+                'ejbalbakoplchlghecdalmeeeajnimhm',
+                'fhbohimaelbohpjbbldcngcnapndodjp',
+                'ibnejdfjmmkpcnlpebklmnkoeoihofec',
+                'bfnaelmomeimhlpmgjnjophhpkkoljpa',
+                'aeachknmefphepccionboohckonoeemg',
+                'hifafgmccdpekplomjjkcfgodnhcellj',
+                'jblndlipeogpafnldhgmapagcccfchpi',
+                'acmacodkjbdgmoleebolmdjonilkdbch',
+                'dlcobpjiigpikoobohmabehhmhfoodbb',
+                'mcohilncbfahbmgdjkbpemcciiolgcge',
+                'agoakfejjabomempkjlepdflaleeobhb',
+                'omaabbefbmiijedngplfjmnooppbclkk',
+                'aholpfdialjgjfhomihkjbmgjidlcdno',
+                'nphplpgoakhhjchkkhmiggakijnkhfnd',
+                'penjlddjkjgpnkllboccdgccekpkcbin',
+                'lgmpcpglpngdoalbgeoldeajfclnhafa',
+                'fldfpgipfncgndfolcbkdeeknbbbnhcc',
+                'bhhhlbepdkbapadjdnnojkbgioiodbic',
+                'gjnckgkfmgmibbkoficdidcljeaaaheg',
+                'afbcbjpbpfadlkmhmclhkeeodmamcflc',
+            ]</span>
+            salah satunya adalah <span>metamask</span>.
+
+            ada beberapa step yang saya skip, seperti (mengecheck setiap Profile sampai <span>200</span>)
+            <img src="../images/reversing-scam-interview-base-on-js-project/29.png" style="width: 780px;height: 295px;">
+            contoh iterasi ke <span>71</span>
+            <img src="../images/reversing-scam-interview-base-on-js-project/30.png" style="width: 780px;height: 295px;">
+            
+            
+            dan setelah semua data berhasil di ambil, terakhir semua file tersebut akan di upload ke server attacker.
+            karena disini host aslinya saya ganti menjadi <span>http://127.0.0.1:1224</span>.
+            <img src="../images/reversing-scam-interview-base-on-js-project/31.png" style="width: 780px;height: 295px;">
+            
+
+            Dari dynamic analisis, bisa kita dapatkan List API pada host <span>86.104.74.51</span>
+
+            <span>1. GET http://86.104.74.51:1224/client/5/507</span> ( init dropper backdoor )
+            <span>2. POST http://86.104.74.51:1224/uploads</span>  ( upload logger )
+            <span>3. GET http://86.104.74.51:1224/brow/5/507</span>  ( dropper berupa malware )
+            <span>4. GET http://86.104.74.51:1224/mclip/5/507</span>  ( dropper berupa keylogger )
+            <span>5. GET http://86.104.74.51:1224/pdown</span>  ( download compailer python3 untuk windows )
+
+            kemudian host tambahan <span>95.164.7.171</span> sebagai penampung keylogger
+            <span>1. POST http://95.164.7.171:8637/api/clip</span> ( upload hasil keylogger )
+
+            List port yang terbuka:
+            siapa tahu, ada yang mau silaturahim ke host tersebut, ( mau coba hack balik mungkin)
+            <img src="../images/reversing-scam-interview-base-on-js-project/32.png" style="width: 780px;height: 295px;">
+            <img src="../images/reversing-scam-interview-base-on-js-project/33.png" style="width: 780px;height: 295px;">
+
+          
+            Kesimpulan, sebagai developer kita harus selalu hati-hati ketika ada orang yang tidak di kenal untuk mengjalankan suatu program,
+            walaupun itu terlihat seperti soal interview.Dan selalu check library yang kita gunakan, mungkin saja library yang kita gunakan jg tidak aman.
+            <a href="https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610" target="_blank">dependency-confusion</a>
+
+            dan terimakasih untuk kalian, yang mau menyisihkan waktu untuk membaca artikel ini.
+
+        </pre>
+    </div>
+  </div>
+
+</br>
+  <footer id="footer">
+    <div class="footer-left">
+      Copyright &copy; 2019 sohainewbie
+    </div>
+  </footer>
+
+</body>
+</html>
