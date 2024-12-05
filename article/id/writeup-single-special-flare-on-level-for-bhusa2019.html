@@ -9,7 +9,7 @@
     <meta name="description" content="An software engineer guy who loves write code and learn about security & reversing">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Hello World">
-    <meta property="og:url" content="https://sohainewbie.github.io">
+    <meta property="og:url" content="https://sohay666.github.io">
     <meta property="og:site_name" content="">
     <meta property="og:description" content="An software engineer guy who loves write code and learn about security & reversing">
     <meta property="og:locale" content="en">
@@ -18,7 +18,8 @@
     <!-- title -->
     <title>Writeup FlareOn Level for bhusa2019</title>
     <!-- styles -->
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
 
     <style type="text/css">
         .code-container{
@@ -47,7 +48,13 @@
     <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
     <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
     <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
-    </pre>    
+    </pre>
+    <div class="language-section">
+        <select id="language">
+            <option value="id">Indonesia</option>
+            <option value="en">English</option>
+        </select>
+      </div>     
     <div class="content-article">
         <pre>
             Berawal dari cuit an di <a style="color: #1da1f2;" href='https://twitter.com/Invalid_handle/status/1159192250816974849'>twitter</a> Challange ini dibuat oleh FLARE-ON pada event BLACKHAT USA 2019.
@@ -61,24 +68,24 @@
             Hal yang pertama kali kita lakukan sebelum melakukan reversing adalah kita harus mengecheck file tersebut 
             bisa mengunaka perintah file
 
-            <img src="../images/flareon-bhusa2019/1.png">
+            <img src="../../images/flareon-bhusa2019/1.png">
 
             File binary x32 tersebut mengunakan .NET, oleh karena itu ada beberapa options tools yang bisa kita gunakan untuk
             mereverse code binary tersebut menjadi file .NET, kali ini saya menggunakan pendekatan secara dynamic analisis 
             dan tools yang saya gunakan LLSpy.
 
             Kemudian kita open file MemeCatBattlestation.exe, 
-            <img src="../images/flareon-bhusa2019/2.png" style="width: 862px;height: 400px;">
+            <img src="../../images/flareon-bhusa2019/2.png" style="width: 862px;height: 400px;">
 
 
             kita bisa lihat terdapat beberapa Class & Form seperti
-            1. <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/BattleCatManagerInstance.cs">BattleCatManagerInstance</a>
-            2. <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/LogoForm.cs">LogoForm</a>
-            3. <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/Program.cs">Program</a>
-            4. <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/Stage1Form.cs">Stage1Form</a>
-            5. <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/Stage2Form.cs">Stage2Form</a>
-            6. <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/Stage3Form.cs">Stage3Form</a>
-            7. <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/VictoryForm.cs">VictoryForm</a>
+            1. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/BattleCatManagerInstance.cs">BattleCatManagerInstance</a>
+            2. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/LogoForm.cs">LogoForm</a>
+            3. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Program.cs">Program</a>
+            4. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage1Form.cs">Stage1Form</a>
+            5. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage2Form.cs">Stage2Form</a>
+            6. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage3Form.cs">Stage3Form</a>
+            7. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/VictoryForm.cs">VictoryForm</a>
 
             Bisa kita asumsikan pada program tersebut terdapat 3 stage level yakni Stage1Form , Stage3Form & Stage3Form.
             Untuk flag mungkin ada di bagian VictoryForm.
@@ -89,11 +96,11 @@
             sebuah string pada textbox yang nantinya akan di validasi apakah inputan kita betul atau tidak.
             Saya coba test input <span style="color:#d1f209;">KUCINGLIAR</span>, dan hasilnya adalah <span style="color: red;">Invalid Weapon Code</span>
 
-            <img src="../images/flareon-bhusa2019/3.png" style="width: 862px;height: 400px;">
+            <img src="../../images/flareon-bhusa2019/3.png" style="width: 862px;height: 400px;">
 
-            Oleh kerena itu kita coba reverse <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/Stage1Form.cs"><font color="#d1f209">Stage1Form</font></a>.
+            Oleh kerena itu kita coba reverse <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage1Form.cs"><font color="#d1f209">Stage1Form</font></a>.
 
-            <img src="../images/flareon-bhusa2019/4.png" style="width: 862px;height: 400px;">
+            <img src="../../images/flareon-bhusa2019/4.png" style="width: 862px;height: 400px;">
 
 
             ada beberapa fungsi yang perlu kita selidiki yaitu FireButton_Click, fungsi tersebut akan di exekusi setelah
@@ -128,14 +135,14 @@
             
             Setelah itu kita coba input <font color='#4ab2c1'>RAINBOW</font>. Menurut saya Stage1 masih terlihat terlalu mudah untuk di pecahkan.
 
-            <img src="../images/flareon-bhusa2019/5.png" style="width: 862px;height: 400px;">
+            <img src="../../images/flareon-bhusa2019/5.png" style="width: 862px;height: 400px;">
 
             <h1 class="stage">Stage2</h1>
 
             Setelah menginput code yang benar maka, kita akan lanjut ke stage level 2, 
-            mari kita check code <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/Stage2Form.cs"><font color="#d1f209">Stage2Form</font></a>.
+            mari kita check code <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage2Form.cs"><font color="#d1f209">Stage2Form</font></a>.
 
-            <img src="../images/flareon-bhusa2019/levelstage2.png" style="width: 862px;height: 400px;">
+            <img src="../../images/flareon-bhusa2019/levelstage2.png" style="width: 862px;height: 400px;">
 
             Ada beberapa fungsi yang perlu kita check yaitu fungsi <font color='#00ff00'>isValidWeaponCode</font>, terdapat pengecheckan inputan string dimana inputan 
             string tersebut di XOR dan di set per index nya pada variable expr_19_cp_0 dan nanti nya akan di matching sesuai dengan 
@@ -175,24 +182,24 @@
             untuk memecahkan di stage 2 saya mencoba untuk merecompile ulang dengan pengeditan sedikit code c# nya.
             dan untuk valid input nya adalah <font color='#4ab2c1'>Bagel_Cannon</font> .
 
-            <img src="../images/flareon-bhusa2019/6.png" style="width: 862px">
+            <img src="../../images/flareon-bhusa2019/6.png" style="width: 862px">
             
             dan kita coba input dengan valid code tersebut.Dan kita next stage ke level 3 :D
 
-            <img src="../images/flareon-bhusa2019/7.png" style="width: 862px">
+            <img src="../../images/flareon-bhusa2019/7.png" style="width: 862px">
 
-            untuk full source code nya bisa di check di <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/solver/solver-stage2.cs">sini</a>
+            untuk full source code nya bisa di check di <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/solver/solver-stage2.cs">sini</a>
 
             <h1 class="stage">Stage3</h1>
 
-            Biasanya semakin naik level nya , tingkat kesulitanya akan semakin tinggi, mari kita check code <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/Stage3Form.cs">Stage3Form</a> nya.
+            Biasanya semakin naik level nya , tingkat kesulitanya akan semakin tinggi, mari kita check code <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage3Form.cs">Stage3Form</a> nya.
 
-            <img src="../images/flareon-bhusa2019/8.png" style="width: 862px;height: 400px;">
+            <img src="../../images/flareon-bhusa2019/8.png" style="width: 862px;height: 400px;">
 
             ada beberapa fungsi yang perlu kita check pada Stage3Form.cs yaitu
-            1. <a href="https://github.com/sohainewbie/ctf/blob/master/flareon-bhtusa2019/Stage3Form.cs#L124-L151">isValidWeaponCode</a>
-            2. <a href="https://github.com/sohainewbie/ctf/blob/master/flareon-bhtusa2019/Stage3Form.cs#L69-L73">getCatGenetics</a>
-            3. <a href="https://github.com/sohainewbie/ctf/blob/master/flareon-bhtusa2019/BattleCatManagerInstance.cs">InitializeBattleCat</a>
+            1. <a href="https://github.com/sohay666/ctf/blob/master/flareon-bhtusa2019/Stage3Form.cs#L124-L151">isValidWeaponCode</a>
+            2. <a href="https://github.com/sohay666/ctf/blob/master/flareon-bhtusa2019/Stage3Form.cs#L69-L73">getCatGenetics</a>
+            3. <a href="https://github.com/sohay666/ctf/blob/master/flareon-bhtusa2019/BattleCatManagerInstance.cs">InitializeBattleCat</a>
 
 
             Pada fungsi <font color='#00ff00'>isValidWeaponCode()</font>, inputan user di tampung dalam variable <font color='red'>s</font> . Setelah itu memangil fungsi  <font color='#00ff00'>getCatGenetics()</font>, 
@@ -244,9 +251,9 @@
             Dan valid code nya adalah <font color='#4ab2c1'>Defeat_them_with_love</font>, dan setelah menginput code tersebut kita otomatis di direct ke 
             page VictoryForm dan langsung mendapatkan flag nya yaitu <span style="color: #f2f21d;">Kitteh_save_galixy@flare-on.com</span> .
 
-            <img src="../images/flareon-bhusa2019/10.png" style="width: 862px">
+            <img src="../../images/flareon-bhusa2019/10.png" style="width: 862px">
 
-            untuk full source code nya bisa di check di <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/flareon-bhtusa2019/solver/solver-stage3.cs">sini</a>.
+            untuk full source code nya bisa di check di <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/solver/solver-stage3.cs">sini</a>.
 
             yang menarik dari soal ini adalah user tidak memungkinkan untuk mempatch langsung si binary nya ke VictoryForm.cs
             karena bisa kita check, bahwa flag nya akan di generate berdasarkan code yang valid dari stage 3.
@@ -271,7 +278,7 @@
 </br>
   <footer id="footer">
     <div class="footer-left">
-      Copyright &copy; 2019 sohainewbie
+      Copyright &copy; 2019 sohay666
     </div>
   </footer>
 

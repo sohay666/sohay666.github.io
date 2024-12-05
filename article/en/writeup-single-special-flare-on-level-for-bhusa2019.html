@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- Author : sohai | this code generate by python script -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hello World">
+    <meta property="og:url" content="https://sohay666.github.io">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:locale" content="en">
+    <meta name="twitter:title" content="Hello World">
+    <meta name="twitter:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <!-- title -->
+    <title>Writeup FlareOn Level for bhusa2019</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
+
+    <style type="text/css">
+        .code-container{
+            background-color: #2f1111;
+            height: 175px;
+            width: 869px;
+            margin-left: 84px;
+        }
+        .code-text{
+            color: #c2af46;
+            margin-left: -68px;
+        }
+        h1.stage{
+            width: 73px;
+            margin-left: 87px;
+        }
+    </style>
+</head>
+
+<body>
+  <div >
+    <pre>
+    <span class="style2">  ___ ___                                 .__</span>              
+    <span class="style8"> /   |   \   ____ ___  ___         _______|__| ____   ____ </span> 
+    <span class="style5">/    ~    \_/ __ \\  \/  /  ______ \___   /  |/    \_/ __ \ </span>
+    <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
+    <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
+    <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
+    </pre>
+    <div class="language-section">
+        <select id="language">
+            <option value="id">Indonesia</option>
+            <option value="en">English</option>
+        </select>
+      </div>     
+    <div class="content-article">
+        <pre>
+            Starting from a tweet at <a style="color: #1da1f2;" href='https://twitter.com/Invalid_handle/status/1159192250816974849'>twitter</a> This challenge was created by FLARE-ON at the 2019 BLACKHAT USA event.
+
+            As usual, the challenges created by FLAREON are always related to reversing engineering, 
+            and we will be asked to find a valid flag, and the flag in the Flareon challenge always has the prefix <span style="color: #f2f21d;">******@flare-on.com</span>.
+
+            Come on, let's try <a href='https://t.co/dxvjmQBdHv?amp=1'>download</a> the question, and the password to open the file <span style="color: #f21d58;"> BHUSA2019</span> .
+
+            After downloading and extracting the zip file, you will find a binary file, MemeCatBattlestation.exe,
+            The first thing we do before reversing is we have to check the file 
+            You can use the file command
+
+            <img src="../../images/flareon-bhusa2019/1.png">
+
+            The x32 binary file uses .NET, therefore there are several tool options that we can use
+            reversed the binary code into a .NET file, this time I used a dynamic analysis approach 
+            and the tools I use are LLSpy.
+
+            Then we open the MemeCatBattlestation.exe file,
+            <img src="../../images/flareon-bhusa2019/2.png" style="width: 862px;height: 400px;">
+
+
+            We can see that there are several Classes & Forms such as
+            1. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/BattleCatManagerInstance.cs">BattleCatManagerInstance</a>
+            2. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/LogoForm.cs">LogoForm</a>
+            3. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Program.cs">Program</a>
+            4. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage1Form.cs">Stage1Form</a>
+            5. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage2Form.cs">Stage2Form</a>
+            6. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage3Form.cs">Stage3Form</a>
+            7. <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/VictoryForm.cs">VictoryForm</a>
+
+            We can assume that in this program there are 3 stage levels, namely Stage1Form, Stage3Form & Stage3Form.
+            The flag may be in the VictoryForm section.
+
+            <h1 class="stage">Stage1</h1>
+
+            First, we try to open the application and there is an input form and button. We are told to include it 
+            a string in the textbox which will later be validated whether our input is correct or not.
+            I tried testing the input <span style="color:#d1f209;">LIAR CAT</span>, and the result was <span style="color: red;">Invalid Weapon Code</span>
+
+            <img src="../../images/flareon-bhusa2019/3.png" style="width: 862px;height: 400px;">
+
+            Therefore we try reverse <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage1Form.cs"><font color="#d1f209">Stage1Form</font> </a>.
+
+            <img src="../../images/flareon-bhusa2019/4.png" style="width: 862px;height: 400px;">
+
+
+            There are several functions that we need to investigate, namely FireButton_Click, this function will be executed after
+            The user clicks the Fire! . We can see that there is validation of user input where input from the textbox must be 
+            match the string <font color='#4ab2c1'>RAINBOW</font>.
+
+            <div class="code-container" style="height: 350px;">
+            <pre class="code-text">
+                . . . .
+
+                private void FireButton_Click(object sender, EventArgs e){
+                    if (this.codeTextBox.Text == "RAINBOW"){
+                        this.fireButton.Visible = false;
+                        this.codeTextBox.Visible = false;
+                        this.armingCodeLabel.Visible = false;
+                        this.invalidWeaponLabel.Visible = false;
+                        this.WeaponCode = this.codeTextBox.Text;
+                        this.victoryAnimationTimer.Start();
+                        return;
+                    }
+                    this.invalidWeaponLabel.Visible = true;
+                    this.codeTextBox.Text = "";
+                }
+
+                . . . .
+
+                this.fireButton.Click += new EventHandler(this.FireButton_Click);
+                
+                . . . .
+            </pre>
+            </div>
+            
+            After that, we try input <font color='#4ab2c1'>RAINBOW</font>. In my opinion, Stage1 still looks too easy to solve.
+
+            <img src="../../images/flareon-bhusa2019/5.png" style="width: 862px;height: 400px;">
+
+            <h1 class="stage">Stage2</h1>
+
+            After inputting the correct code, we will proceed to stage level 2, 
+            let's check the code <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage2Form.cs"><font color="#d1f209">Stage2Form</font></ a>.
+
+            <img src="../../images/flareon-bhusa2019/levelstage2.png" style="width: 862px;height: 400px;">
+
+            There are several functions that we need to check, namely the <font color='#00ff00'>isValidWeaponCode</font> function, there is a string input check where the input 
+            The string is XORed and set per index in the variable expr_19_cp_0 and later it will be matched according to
+
+            <font color='#4ab2c1'>char[]{ '\u0003','"','"','"','%','\u0014','\u000e','.','?','=',':','9' } </font>
+
+            we can ensure that the valid input length is 12 bytes.
+            <div class="code-container" style="height: 430px;">
+            <pre class="code-text">
+                private bool isValidWeaponCode(string s){
+                    char[] array = s.ToCharArray();
+                    int length = s.Length;
+                    for (int i = 0; i < length; i++){
+                        char[] expr_19_cp_0 = array;
+                        int expr_19_cp_1 = i;
+                        expr_19_cp_0[expr_19_cp_1] ^= (char)(65 + i * 2);
+                    }
+
+                    return array.SequenceEqual(new char[]{
+                                '\u0003',
+                                '"',
+                                '"',
+                                '"',
+                                '%',
+                                '\u0014',
+                                '\u000e',
+                                '.',
+                                '?',
+                                '=',
+                                ':',
+                                '9'
+                            });
+                }
+            </pre>
+            </div>
+
+            to solve in stage 2 I tried to recompile it with a little editing of the c# code.
+            and for valid input is <font color='#4ab2c1'>Bagel_Cannon</font> .
+
+            <img src="../../images/flareon-bhusa2019/6.png" style="width: 862px">
+
+            and we try to input with valid code. And we next stage to level 3 :D
+
+            <img src="../../images/flareon-bhusa2019/7.png" style="width: 862px">
+
+            for the full source code can be checked at <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/solver/solver-stage2.cs">here</a>
+
+            <h1 class="stage">Stage3</h1>
+
+            Usually the higher the level, the higher the level of difficulty, let's check the code <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/Stage3Form.cs">Stage3Form</a>.
+
+            <img src="../../images/flareon-bhusa2019/8.png" style="width: 862px;height: 400px;">
+
+            There are several functions that we need to check in Stage3Form.cs, namely
+            1. <a href="https://github.com/sohay666/ctf/blob/master/flareon-bhtusa2019/Stage3Form.cs#L124-L151">isValidWeaponCode</a>
+            2. <a href="https://github.com/sohay666/ctf/blob/master/flareon-bhtusa2019/Stage3Form.cs#L69-L73">getCatGenetics</a>
+            3. <a href="https://github.com/sohay666/ctf/blob/master/flareon-bhtusa2019/BattleCatManagerInstance.cs">InitializeBattleCat</a>
+
+            In the function <font> color='#00ff00'>isValidWeaponCode()</font>, user input is stored in the variable <font color='red'>s</font>. After that, call the function <font color='#00ff00'>getCatGenetics()</font>,
+            the function performs base64 encoding with the value taken from the variable <font color='red'>this.PriorWeaponCode</font>.
+            The variable <font color='red'>PriorWeaponCode</font> is user input at stage level 2, namely <font color='#4ab2c1'>Bagel_Cannon</font> and will later be set to
+            the variable <font color='red'>catGenetics</font>.
+            The last is to call <font color='#00ff00'>InitializeBattleCat(Encoding.UTF8.GetBytes(catGenetics), Encoding.UTF8.GetBytes(s)) </font>
+            and compare it with the value
+
+            <font color='#4ab2c1'> byte[]{ 95,193,50,12,127,228,98,6,215,46,200,106,251,121,186,119,109,73,35,14,20 } </font>
+
+            we can be sure that the valid input length is 21 bytes.
+
+            <div class="code-container" style="height: 430px;">
+            <pre class="code-text">
+                private bool isValidWeaponCode(string s){
+                    string catGenetics = this.getCatGenetics();
+                    return BattleCatManagerInstance.InitializeBattleCat(Encoding.UTF8.GetBytes(catGenetics), 
+                    Encoding.UTF8.GetBytes(s)).SequenceEqual(new byte[]{
+                        95,
+                        193,
+                        50,
+                        12,
+                        127,
+                        228,
+                        98,
+                        6,
+                        215,
+                        46,
+                        200,
+                        106,
+                        251,
+                        121,
+                        186,
+                        119,
+                        109,
+                        73,
+                        35,
+                        14,
+                        20
+                    });
+                }
+            </pre>
+            </div>
+
+            to solve in stage 3 I tried to recompile it with a little editing of the c# code.
+
+            And the valid code is <font color='#4ab2c1'>Defeat_them_with_love</font>, and after inputting the code we are automatically directed 
+            to the VictoryForm page and immediately get the flag, which is <span style="color: #f2f21d;">Kitteh_save_galixy@flare-on.com</span> .
+
+            <img src="../../images/flareon-bhusa2019/10.png" style="width: 862px">
+
+            for the full source code you can check at <a href="https://raw.githubusercontent.com/sohay666/ctf/master/flareon-bhtusa2019/solver/solver-stage3.cs">here</a>.
+
+            What's interesting about this question is that the user is not allowed to patch the binary directly to VictoryForm.cs
+            because we can check that the flag will be generated based on valid code from stage 3.
+            <div class="code-container" style="height: 190px;">
+            <pre class="code-text">
+                private void VictoryForm_Load(object sender, EventArgs e){
+                byte[] data = new byte[] { 74, 240, 181, 167, 229, 232, 186, 112, 186,
+                                234, 154, 75, 116, 154, 71, 235, 31, 132, 41, 179, 119,
+                                137, 199, 167, 215, 148, 25, 196, 152, 253, 227
+                            };
+                    byte[] bytes = BattleCatManagerInstance.InitializeBattleCat(Encoding.UTF8.GetBytes(this.Arsenal), data);
+                    this.flagLabel.Text = Encoding.UTF8.GetString(bytes);
+                }
+            </pre>
+            </div>
+
+            That's all and thank you for taking the time to read this article :)
+        </pre>
+    </div>
+  </div>
+
+</br>
+  <footer id="footer">
+    <div class="footer-left">
+      Copyright &copy; 2019 sohay666
+    </div>
+  </footer>
+
+</body>
+</html>

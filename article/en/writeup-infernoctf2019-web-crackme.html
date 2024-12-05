@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- Author : sohai | this code generate by python script -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hello World">
+    <meta property="og:url" content="https://sohay666.github.io">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:locale" content="en">
+    <meta name="twitter:title" content="Hello World">
+    <meta name="twitter:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <!-- title -->
+    <title>Writeup Infernoctf 2019 web crackme</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
+
+    <style type="text/css">
+        .code-container{
+            background-color: #2f1111;
+            height: 175px;
+            width: 869px;
+            margin-left: 84px;
+        }
+        .code-text{
+            color: #c2af46;
+            margin-left: -68px;
+        }
+        h1.stage{
+            width: 73px;
+            margin-left: 87px;
+        }
+    </style>
+</head>
+
+<body>
+  <div >
+    <pre>
+    <span class="style2">  ___ ___                                 .__</span>              
+    <span class="style8"> /   |   \   ____ ___  ___         _______|__| ____   ____ </span> 
+    <span class="style5">/    ~    \_/ __ \\  \/  /  ______ \___   /  |/    \_/ __ \ </span>
+    <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
+    <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
+    <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
+    </pre>
+    <div class="language-section">
+        <select id="language">
+            <option value="id">Indonesia</option>
+            <option value="en">English</option>
+        </select>
+      </div>    
+    <div class="content-article">
+        <pre>
+            In this infernoctf2019 challenge, I tried to complete the Web Crackme challenge with points <font color="yellow">399</font>.
+            we open the web page
+
+            <img src="../../images/infernoctf2019/webcrack/1.png" style="width: 862px;height: 400px;">
+
+
+            We can see that there are several scripts that are loaded, but we focus on 3 files 
+            1. app.js
+            2. assembly. wat
+            3. script.js
+
+            <h1 class="stage">App.js</h1>
+
+            let's look at some pieces of app.js, there are methods and calling a function <font color="yellow">selectExample</font> & <font color="yellow">execute</font>
+
+            <div class="code-container" style="height: 550px;">
+            <pre class="code-text">
+                . . . .
+
+                methods: {
+                    async selectExample(example) {
+                        window.location.hash = example;
+                        this.selectedExample = example;
+
+                        const [wat, js] = await Promise.all([
+                            loadText(example + '/assembly.wat'),
+                            loadText(example + '/script.js'),
+                        ]);
+
+                        this.wat = wat;
+                        this.watHighlighted = hljs.highlight('clojure', wat).value;
+                        this.js = js;
+                        this.jsHighlighted = hljs.highlight('js', js).value;
+
+                        return 0;
+                    },
+                    async execute() {
+
+                        var key = document.getElementById('key').value;
+                        var stringFromKey = "";
+                        for (var i = 0; i < key.length; i++) {
+                            stringFromKey+=key.charCodeAt(i).toString(16);
+                        }
+                        const parsedWat = wabtCompiler.parseWat("", this.wat);
+                        const buffer = parsedWat.toBinary({}).buffer;
+                        const wasmModule = await WebAssembly.compile(buffer);
+
+                        eval(this.js);
+
+                        return 0;
+                    }
+                }
+
+            </pre>
+            </div>
+            
+            let's break it down by statement in the <font color="yellow">selectExample</font> function, we can see that the code makes an http request to load 
+            an assembly.wat and script.js script will then be set to the wat & js variable
+            then collected into sets into this.wat & this.js
+
+            <div class="code-container" style="height: 200px;">
+            <pre class="code-text">
+
+                        const [wat, js] = await Promise.all([
+                            loadText(example + '/assembly.wat'),
+                            loadText(example + '/script.js'),
+                        ]);
+
+                        this.wat = wat;
+                        this.watHighlighted = hljs.highlight('clojure', wat).value;
+                        this.js = js;
+                        this.jsHighlighted = hljs.highlight('js', js).value;
+            </pre>
+            </div>
+
+            then the <font color="yellow">execute</font> function is executed, all user input in the textbox will be
+            set it to the <font color="yellow">key</font> variable then convert it to hex.
+            and later the value will be compared with the hex value in the code <font color="yellow">assembly.wat</font>
+
+            <div class="code-container" style="height: 200px;">
+            <pre class="code-text">
+
+                        var key = document.getElementById('key').value;
+                        var stringFromKey = "";
+                        for (var i = 0; i < key.length; i++) {
+                            stringFromKey+=key.charCodeAt(i).toString(16);
+                        }
+                        const parsedWat = wabtCompiler.parseWat("", this.wat);
+                        const buffer = parsedWat.toBinary({}).buffer;
+                        const wasmModule = await WebAssembly.compile(buffer);
+
+                        eval(this.js);
+            </pre>
+            </div>
+
+
+            <h1 class="stage" style="width: 136px;">assembly.wat</h1>
+            The following is the assembly code that was loaded earlier, there are 2 functions
+            <font color="yellow">myFunction1</font> & <font color="yellow">myFunction2</font>
+
+            <div class="code-container" style="height: 630px;">
+            <pre class="code-text">
+                (module
+                  (memory 1)
+                  (func $myFunction1 (result i32)
+                   (i32.store
+                      (i32.const 0)
+                      (i32.const 0xd359beef) 
+                    )
+
+                    (i32.store
+                      (i32.const 3)
+                      (i32.const 0x5579)
+                    )
+                    
+                    (i32.store
+                        (i32.const 5)
+                        (i32.const 0x66)
+                    )
+                    (i32.load
+                      (i32.const 2)
+                    )
+                  )
+
+                  (func $myFunction2 (result i32)
+                    (i32.store
+                      (i32.const 0)
+                      (i32.const 0xc939ba2d)
+                    )
+                   (i32.store
+                      (i32.const 3)
+                      (i32.const 0x7165) 
+                    )
+                    (i32.store16
+                        (i32.const 4)
+                        (i32.const 0x2D4D) 
+                    )
+                    (i32.load
+                      (i32.const 2)
+                    )
+                  )
+                  (export "myFunction1" (func $myFunction1))
+                  (export "myFunction2" (func $myFunction2))
+                )
+            </pre>
+            </div>
+
+            in the function <font color="yellow">myFunction1</font>,
+            <div class="code-container" style="height: 330px;">
+            <pre class="code-text">
+                (module
+                  (memory 1)
+                  (func $myFunction1 (result i32)
+                   (i32.store
+                      (i32.const 0)
+                      (i32.const 0xd359beef) 
+                    )
+
+                    (i32.store
+                      (i32.const 3)
+                      (i32.const 0x5579)
+                    )
+                    
+                    (i32.store
+                        (i32.const 5)
+                        (i32.const 0x66)
+                    )
+                    (i32.load
+                      (i32.const 2)
+                    )
+                  )
+            </pre>
+            </div>
+            in the <font color='#4ab2c1'>i32.store</font> -> <font color="red">i32.const 0</font> section the value is <font color="yellow">0xd359beef< /font>
+            when it is loaded, what will happen will be reversed to <font color="yellow">0xefbe59d3</font>
+                <table style="margin-left: 138px;width: 250px;" border="1">
+                                    <tr>
+                                        <td>0</td>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <td><font color='#4ab2c1'>ef</font></td>
+                                        <td><font color='#4ab2c1'>be</font></td>
+                                        <td><font color='#4ab2c1'>59</font></td>
+                                        <td><font color='#4ab2c1'>d3</font></td>
+                                    </tr>                
+                                </table>
+
+            in the section <font color='#4ab2c1'>i32.store</font> -> <font color="red">i32.const 3</font> the value is<font color="yellow">0x5579</font >
+            then what will happen will be reversed to <font color="yellow">0x7955</font> and at the 3rd index then
+            will be replaced with the new value
+                <table style="margin-left: 138px;width: 250px;" border="1">
+                                    <tr>
+                                        <td>0</td>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>3</td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr>
+                                        <td><font color='#4ab2c1'>ef</font></td>
+                                        <td><font color='#4ab2c1'>be</font></td>
+                                        <td><font color='#4ab2c1'>59</font></td>
+                                        <td><font color='#4ab2c1'>79</font></td>
+                                        <td><font color='#4ab2c1'>55</font></td>
+                                    </tr>                
+                                </table>
+            and in the <font color='#4ab2c1'>i32.store</font> -> <font color="red">i32.const 5</font> section the value is filled in<font color="yellow">0x66 </font>
+            then the 5th index is filled with the value 66
+                <table style="margin-left: 138px;width: 250px;" border="1">
+                                    <tr>
+                                        <td>0</td>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>3</td>
+                                        <td>4</td>
+                                        <td>5</td>
+                                    </tr>
+                                    <tr>
+                                        <td><font color='#4ab2c1'>ef</font></td>
+                                        <td><font color='#4ab2c1'>be</font></td>
+                                        <td><font color='#4ab2c1'>59</font></td>
+                                        <td><font color='#4ab2c1'>79</font></td>
+                                        <td><font color='#4ab2c1'>55</font></td>
+                                        <td><font color='#4ab2c1'>66</font></td>
+                                    </tr>                
+                                </table>
+
+            then the function <font color="yellow">myFunction1</font> has the value <font color='#4ab2c1'>0xefbe59795566</font>
+            then in the <font color='#4ab2c1'> i32.load</font> -> <font color="red">(i32.const 2)</font> section
+            then what happens is that it takes <font color='#4ab2c1'>0x59795566</font>
+            then in reverse <font color='#4ab2c1'>0x66557959</font>
+                    
+            and this applies to the function <font color="yellow">myFunction2</font> 
+            has the value <font color='#4ab2c1'>0x2d4d6539</font>
+
+            <h1 class="stage" style="width: 100px;">script.js</h1>
+
+            in this section we can see that the function in wasm is loaded and then each
+            The function will be set to a variable <font color="red">res1</font> & <font color="red">res2</font> and combined into 1 variable, namely <font color='#4ab2c1'>finalres </font>
+
+            <div class="code-container" style="height: 280px;">
+            <pre class="code-text">
+                const wasmInstance = new WebAssembly.Instance(wasmModule, {});
+                const { myFunction1,myFunction2 } = wasmInstance.exports;
+
+                let res1 = myFunction1().toString(16);
+                let res2 = myFunction2().toString(16);
+
+                let finalres = res1 + res2;
+
+                if (finalres ==  stringFromKey){
+                    alert("Here you go infernoCTF{"+key+"}");
+                }
+                else{
+                    alert("Naah, Remember I'm the future!!");
+                }
+            </pre>
+            </div>
+
+            To prove this, we try loading the module via the console
+
+            <img src="../../images/infernoctf2019/webcrack/2.png" style="width: 862px">
+            <img src="../../images/infernoctf2019/webcrack/3.png" style="width: 862px">
+
+            we try to take the finalres variable, the value is the same <font color='#4ab2c1'>665579592d4d6539</font>
+
+            <img src="../../images/infernoctf2019/webcrack/4.png" style="width: 862px">
+
+            then the final step is that we try to decode the hex value,
+            I made a code snippet like this
+            <div class="code-container" style="height: 120px;">            
+            <pre class="code-text">
+                let key = "";
+                for (var i = 0; i < finalres.length; i++) {
+                    key += (i % 2 === 0) ? String.fromCharCode(parseInt(finalres.substr(i, 2), 16)) : '';
+                }
+            </pre>
+            </div>
+
+            then we try to run the code
+
+            <img src="../../images/infernoctf2019/webcrack/5.png" style="width: 862px">
+
+            and we try to input the flag <font color='#4ab2c1'>infernoCTF{fUyY-Me9}</font>
+
+            <img src="../../images/infernoctf2019/webcrack/6.png" style="width: 862px">
+
+            Thanks and thank you for taking the time to read this article :)
+        </pre>
+    </div>
+  </div>
+
+</br>
+  <footer id="footer">
+    <div class="footer-left">
+      Copyright &copy; 2019 sohay666
+    </div>
+  </footer>
+
+</body>
+</html>

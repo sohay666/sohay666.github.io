@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- Author : sohai | this code generate by python script -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hello World">
+    <meta property="og:url" content="https://sohay666.github.io">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:locale" content="en">
+    <meta name="twitter:title" content="Hello World">
+    <meta name="twitter:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <!-- title -->
+    <title>Writeup BSIDESTLV web packman</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
+
+    <style type="text/css">
+        .code-container{
+            background-color: #2f1111;
+            height: 175px;
+            width: 869px;
+            margin-left: 84px;
+        }
+        .code-text{
+            color: #c2af46;
+            margin-left: -68px;
+        }
+    </style>
+</head>
+
+<body>
+  <div >
+    <pre>
+    <span class="style2">  ___ ___                                 .__</span>              
+    <span class="style8"> /   |   \   ____ ___  ___         _______|__| ____   ____ </span> 
+    <span class="style5">/    ~    \_/ __ \\  \/  /  ______ \___   /  |/    \_/ __ \ </span>
+    <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
+    <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
+    <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
+    </pre>
+    <div class="language-section">
+      <select id="language">
+          <option value="id">Indonesia</option>
+          <option value="en">English</option>
+      </select>
+    </div>    
+    <div class="content-article">
+        <pre>
+            In this <span>ritsec2019</span> challenge, I tried to complete the Our First Api challenge.
+            The challenge consists of 2 pages, namely:
+
+            1. <span>http://ctfchallenges.ritsec.club:3000</span>
+            2. <span>http://ctfchallenges.ritsec.club:4000</span>
+
+            <img src="../../images/ritsec2019/1.png" style="width: 862px;height: 400px;">
+
+            then we try checking <span>http://ctfchallenges.ritsec.club:3000</span>
+            The backend uses express, cmiiw.
+
+            <img src="../../images/ritsec2019/2.png" style="width: 862px;height: 400px;">
+
+            We can confirm that port 3000 is only used for authentication.
+            then we try checking <span>http://ctfchallenges.ritsec.club:4000</span>
+
+
+            <img src="../../images/ritsec2019/4.png" style="width: 862px;height: 400px;">
+
+            It turns out that on port 4000, it only displays the api list documentation that we can use
+            and is divided into 3, namely
+
+            1. <span>http://ctfchallenges.ritsec.club:4000/api/admin</span>
+            2. <span>http://ctfchallenges.ritsec.club:4000/api/normal</span>
+            3. <span>http://ctfchallenges.ritsec.club:3000/auth</span>
+
+            Before we try to access the admin and normal endpoints, it's better if we try 
+            authentication on the <span>http://ctfchallenges.ritsec.club:3000</span> page first.
+            
+            let's check the `/auth` path on <span>http://ctfchallenges.ritsec.club:3000/auth</span>
+            let's try to curl
+
+            <img src="../../images/ritsec2019/5.png">
+
+            after we hit the endpoint <span>http://ctfchallenges.ritsec.club:3000/auth</span>
+            The response back was 
+
+            <span>{"reason" : "missing name parameter" }</span>
+
+            Therefore, let's try adding 1 parameter name with the contents <span>wildcat</span>
+            and try doing curls 
+
+            <span>http://ctfchallenges.ritsec.club:3000/auth?name=kucingliar</span>
+
+            The response back was 
+
+            <span>{"token":"<font color="red">eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9</font>.<font color="#d63aff">eyJuYW1lIjoia3VjaW5nbGlhciIsInR5cGUiOiJ1c2VyIiwiaWF0IjoxNTc0MDUwNDAxfQ</font>.<font color="#4fbdf1">mxZF8jUvaUGJiNN4PBqekimT5BdmU5GEgD5t38QBJdBS2Vk1xZ96t5LjZ_TNbyYS2k9Gd-_Nibi5wFU4GRjLTnOk9lCgc5fUER8AlqvoLFR6y0Vt9Kdn9-GELAyQy0IZJs131Xgl4DGvL5ErLNsVqn7UvcKRKMirnCoi_acff7Y</font>"}</span>
+
+
+            after that we get a token, we can use this token later to access the endpoint
+            like 
+
+            1. <span>http://ctfchallenges.ritsec.club:4000/api/admin</span>
+            2. <span>http://ctfchallenges.ritsec.club:4000/api/normal</span>
+
+            and we can ensure that the token used uses JWT (JSON Web Token)
+            JWT consists of 3 parts, namely <font color="red">HEADER</font>.<font color="#d63aff">PAYLOAD</font>.<font color="#4fbdf1">SIGNATURE</font> and generally wrapped with base64 encoding
+
+            <img src="../../images/ritsec2019/6.png">
+
+            we can see the header used by RS256, so the signature technique uses RSASSA-PKCS1-v1_5 so we need the public key then hashed by SHA-256, cmiiw.
+
+            and for the payload there are 3 attributes, namely name, type and iat
+
+            <span>{"name":"kucingliar","type":"user","iat":1574050401}</span>
+
+            After analyzing, we try to make a request using the token and we set it in the header
+
+            <img src="../../images/ritsec2019/7.png">
+
+            It turned out to be successful but to get the flag we need to access the admin endpoint.
+            This is where it's interesting how we try to manipulate the user type to become admin.
+
+            the first thing in my mind is what if the endpoint <span>http://ctfchallenges.ritsec.club:3000/auth</span>
+            we give the type parameter with the value admin.
+
+            <img src="../../images/ritsec2019/8.png">
+
+            It turns out that after decoding the type, the user is still like the first technique failed.
+            Like it or not, we need to manipulate the jwt, because the algorithm used is <span>RS256</span> so we need to find out the public key first to generate a new payload.
+
+            let's take a peek <span>http://ctfchallenges.ritsec.club:4000</span> to see if we find a clue,
+
+            <img src="../../images/ritsec2019/9.png">
+
+            It turns out we found a clue, namely that we tried accessing robots.txt 
+            (robots.txt is a file that functions to control or control user-agents (such as: Googlebot) in crawling website pages. 
+            If you want Google to be able to explore all the files on the website, you don't need to create a robots.txt file at all)
+
+            <img src="../../images/ritsec2019/11.png">
+
+            Let's try downloading the file signing.pem
+
+            <img src="../../images/ritsec2019/12.png">
+            
+            The contents of signing.pem are in the form
+
+            <div class="code-container" style="height: 150px;">
+            <pre class="code-text">
+            -----BEGIN PUBLIC KEY-----
+            MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBquzMGkZlJmZm4pYppxeDmsGd
+            8+9mOh5S9O7W7Gu5VByfl7i3JdCfGxRJdHscg6l321PeTXsXGZ7goHd4Xjv/FtKQ
+            DyoaKql4Kl692KKKN/9xA6tKdOYQbZvPqyRXUVOGdyZ12qFBOQzI7ox22YL3ul/3
+            nyiDR+p+JKbdVU6AWQIDAQAB
+            -----END PUBLIC KEY-----
+            </pre>
+            </div>
+
+            to manipulate the jwt I have a reference from 
+            https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/JSON%20Web%20Token
+            very helpful.
+
+            The first thing we do is, we convert it to the hexa public key form.
+
+            <img src="../../images/ritsec2019/13.png">
+
+            after that we try to modify the payload type to admin, then we encode it to base64
+            after that we try to generate the header.payload again using sha256 again using the hex value that we got earlier from signing.pem
+
+            and don't forget that we change RS256 to HS256
+
+            before <font color="red">eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9</font> <span>{"typ":"JWT","alg":"RS256"}</span>
+
+            after <font color="red">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9</font> <span>{"typ":"JWT","alg":"HS256"}</span>
+
+
+            <img src="../../images/ritsec2019/14.png">
+
+            after that we generate a new signature.
+
+            <img src="../../images/ritsec2019/15.png">
+
+
+            after that we combine the <font color="red">HEADER</font>.<font color="#d63aff">PAYLOAD</font>.<font color="#4fbdf1">SIGNATURE</font> that we have for
+
+
+            <font color="red">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9</font>.<font color="#d63aff">eyJuYW1lIjoia3VjaW5nbGlhciIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTU3NDA1MDQwMX0K</font>.<font color="#4fbdf1">qig06OoojTj3qrxCptwT-RdS33IVgQdBR1t9mykb9NU</font> 
+
+            Let's try requesting the endpoint 
+
+            1. <span>http://ctfchallenges.ritsec.club:4000/api/admin</span>
+            2. <span>http://ctfchallenges.ritsec.club:4000/api/normal</span>
+
+            <img src="../../images/ritsec2019/16.png">
+
+            and finally we found the flag :D .
+
+            <img src="../../images/ritsec2019/17.png">
+
+        </pre>
+    </div>
+  </div>
+
+</br>
+  <footer id="footer">
+    <div class="footer-left">
+      Copyright &copy; 2019 sohay666
+    </div>
+  </footer>
+
+</body>
+</html>

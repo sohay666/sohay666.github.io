@@ -9,7 +9,7 @@
     <meta name="description" content="An software engineer guy who loves write code and learn about security & reversing">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Hello World">
-    <meta property="og:url" content="https://sohainewbie.github.io">
+    <meta property="og:url" content="https://sohay666.github.io">
     <meta property="og:site_name" content="">
     <meta property="og:description" content="An software engineer guy who loves write code and learn about security & reversing">
     <meta property="og:locale" content="en">
@@ -18,7 +18,8 @@
     <!-- title -->
     <title>Writeup BSIDESTLV web packman</title>
     <!-- styles -->
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
 
     <style type="text/css">
         .code-container{
@@ -43,10 +44,16 @@
     <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
     <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
     <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
-    </pre>    
+    </pre>
+    <div class="language-section">
+        <select id="language">
+            <option value="id">Indonesia</option>
+            <option value="en">English</option>
+        </select>
+      </div>
     <div class="content-article">
         <pre>
-            pertama kita download dulu file <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/bsidestlv2019/webapplication/packman/challange.js">challenge.js</a> nya, kemudian kita analisa
+            pertama kita download dulu file <a href="https://raw.githubusercontent.com/sohay666/ctf/master/bsidestlv2019/webapplication/packman/challange.js">challenge.js</a> nya, kemudian kita analisa
             code nya , oh ya saya mengunakan dynamic analisis
 
             bisa kita lihat bahwa challange nya mengunakan nodejs, dengan framework expresjs,
@@ -54,7 +61,7 @@
 
             kita buka di browser alamat <span>http://pacman.challenges.bsidestlv.com/</span> maka akan muncul tulisan <span style="color:red;">You are not authorized!</span>
 
-            <img src="../images/bsidestlv2019-packman/1.png" style="width: 862px;height: 400px;">
+            <img src="../../images/bsidestlv2019-packman/1.png" style="width: 862px;height: 400px;">
             
             mari kita check path `/` pada challenge.js
             <div class="code-container">
@@ -154,21 +161,21 @@
             </pre>
             </div>
 
-            <img src="../images/bsidestlv2019-packman/3.png" style="width: 862px;>
+            <img src="../../images/bsidestlv2019-packman/3.png" style="width: 862px;">
 
             output <span>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc0FkbWluIjp0cnVlLCJpYXQiOjE1NjAyNzkzNzJ9.-laaimCkf8gJnaCO7ztF_YMc0Xlsq3xVU53oN4RuH24</span>
 
             maka nanti pada cookies kita set <span>auth=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc0FkbWluIjp0cnVlLCJpYXQiOjE1NjAyNzkzNzJ9.-laaimCkf8gJnaCO7ztF_YMc0Xlsq3xVU53oN4RuH24</span>
 
-            <img src="../images/bsidestlv2019-packman/4.png" style="width: 862px;height: 400px;">
+            <img src="../../images/bsidestlv2019-packman/4.png" style="width: 862px;height: 400px;">
 
             muncul sebuah halaman berupa game packman,
 
-            <img src="../images/bsidestlv2019-packman/5.png" style="width: 862px;height: 400px;">
+            <img src="../../images/bsidestlv2019-packman/5.png" style="width: 862px;height: 400px;">
 
             kita viewsource 
 
-           <img src="../images/bsidestlv2019-packman/6.png" style="width: 862px;height: 400px;">
+           <img src="../../images/bsidestlv2019-packman/6.png" style="width: 862px;height: 400px;">
 
             maka kita temukan sebuah event handler ketika user mengclick `levelUp` maka ada proses ajax berupa 
 
@@ -180,12 +187,12 @@
 
             maka kita coba request lagi.
 
-            <img src="../images/bsidestlv2019-packman/7.png" style="width: 862px;height: 400px;">
+            <img src="../../images/bsidestlv2019-packman/7.png" style="width: 862px;height: 400px;">
 
 
             output berupa <span>Level up!</span>
 
-            mari kita check path <span>/levelUp</span> pada script <a href="https://raw.githubusercontent.com/sohainewbie/ctf/master/bsidestlv2019/webapplication/packman/challange.js">challenge.js</a>
+            mari kita check path <span>/levelUp</span> pada script <a href="https://raw.githubusercontent.com/sohay666/ctf/master/bsidestlv2019/webapplication/packman/challange.js">challenge.js</a>
 
             <div class="code-container" style="height: 230px;">
             <pre class="code-text">
@@ -210,13 +217,13 @@
 
             <span>{"level":"666|ls -la && pwd && id"}</span>
 
-            <img src="../images/bsidestlv2019-packman/8.png" style="width: 862px;height: 400px;">
+            <img src="../../images/bsidestlv2019-packman/8.png" style="width: 862px;height: 400px;">
 
             maka kita hanya mencari flag dimana
 
             <span>{"level":"666|ls -la / && cat /flag.txt"}</span>
 
-            <img src="../images/bsidestlv2019-packman/9.png" style="width: 862px;height: 400px;">
+            <img src="../../images/bsidestlv2019-packman/9.png" style="width: 862px;height: 400px;">
 
             setelah itu flag nya adalah <span>BSidesTLV{H1dd3nPacmanLevelUP!}</span>
 
@@ -231,7 +238,7 @@
 </br>
   <footer id="footer">
     <div class="footer-left">
-      Copyright &copy; 2019 sohainewbie
+      Copyright &copy; 2019 sohay666
     </div>
   </footer>
 

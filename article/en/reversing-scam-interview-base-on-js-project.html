@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- Author : sohai | this code generate by python script -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="liquidity front runner bots">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hello World">
+    <meta property="og:url" content="https://sohay666.github.io">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="Reversing Scam Interview base on Js Project">
+    <meta property="og:locale" content="en">
+    <meta name="twitter:title" content="Hello World">
+    <meta name="twitter:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <!-- title -->
+    <title>Reversing Scam Interview base on Js Project</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
+
+    <style type="text/css">
+        .code-container{
+            background-color: #2f1111;
+            height: 175px;
+            width: 869px;
+            margin-left: 84px;
+        }
+        .code-text{
+            color: #c2af46;
+            margin-left: -68px;
+        }
+    </style>
+</head>
+
+<body>
+  <div >
+    <pre>
+    <span class="style2">  ___ ___                                 .__</span>              
+    <span class="style8"> /   |   \   ____ ___  ___         _______|__| ____   ____ </span> 
+    <span class="style5">/    ~    \_/ __ \\  \/  /  ______ \___   /  |/    \_/ __ \ </span>
+    <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
+    <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
+    <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
+    </pre>
+    <div class="language-section">
+        <select id="language">
+            <option value="id">Indonesia</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+    <div class="content-article">
+        <pre>
+            Previously, I would like to share my personal experience regarding an interview that ended in a scam, which is actually dangerous for us 
+            because our data can be stolen unknowingly (because the interview is live & screen sharing with the person concerned, so if we are not focused, 
+            we might get hacked). Fortunately, in my case, the attacker did not succeed in carrying out his action. Here is the story.
+
+            On an afternoon, I casually opened LinkedIn. 
+            There was a chat notification from someone offering a full-time remote position; here is the chat:
+             
+            <img src="../../images/reversing-scam-interview-base-on-js-project/1.png" style="width: 530px;height: 160px;">
+            
+            With an offer like that, I was very interested. Then he made a link for the interview level using Google Meet.
+
+            <img src="../../images/reversing-scam-interview-base-on-js-project/2.png" style="width: 530px;height: 160px;">
+
+            After that, I was interviewed by him and asked what projects I had worked on, what role I had, and my salary expectations. 
+            Then, he asked for my GitHub user.I was invited to a project using Node.js, and he asked me to share my screen 
+            because he said this was a screening stage (so far there is nothing suspicious).
+            
+            <img src="../../images/reversing-scam-interview-base-on-js-project/3.png" style="width: 530px;height: 160px;">
+
+            After being invited, I was told to read about the project and the clone project.
+
+            <img src="../../images/reversing-scam-interview-base-on-js-project/4.png" style="width: 680px;height: 400px;">
+
+            I have also cloned the project, and then I always check for malicious functions such as eval 
+            (why eval??? because the eval function is able to execute strings as code. If the string comes from an untrusted source (such as user input), 
+            then the attacker can insert malicious code to be executed. You can read more here or in other articles <a target="_blank" href="https://javascriptweblog.wordpress.com/2010/04/19/how-evil-is-eval/">how-evil-is-eval</a>.
+
+            <img src="../../images/reversing-scam-interview-base-on-js-project/5.png" style="width: 880px;height: 200px;">
+
+            I realized there was a very suspicious file in the file <span>./server/app.js:152</span> Here's the code
+
+            <img src="../../images/reversing-scam-interview-base-on-js-project/6.png" style="width: 500px;height: 470px;">
+            sure enough, the function is called when calling <span>utils.assets()</span> in the file <span>./server/config/util.js</span>
+
+            <img src="../../images/reversing-scam-interview-base-on-js-project/7.png" style="width: 500px;height: 270px;">
+            
+            also, i check these file <span>./public/models/.svn/bower_components/assets</span>
+            <img src="../../images/reversing-scam-interview-base-on-js-project/8.png" style="width: 881px;height: 29px;">
+
+            Then, in the interview session. I told the interviewer (nice try diddy, and end-call).
+
+            There is a thing where I suspect the JavaScript code is obfuscated. Usually, there are many reasons the code is obfuscated  
+            such as the code hard to read by people, avoid from reversing to know the flow code & some they put malicious code (allowing us to steal important files on our pc)
+
+            I will divide it into several parts:
+            1. <a href="#static-analisis">Static Analisis</a>
+            2. <a href="#dynamic-analysis">Dynamic Analysis & Simulation</a>
+
+            <h1 id="static-analisis" style="width: 180px;margin-left: 87px;">Static Analysis</h1>
+
+            This reversing, I will focus on the JavaScript function section,you can check in <a href="https://gist.githubusercontent.com/sohay666/8089c68a7f28a47d85612ba43a525c2e/raw/7836d0f7de0f2eb9bb01b08988b7a738f7f2b40e/js.malscript" target="_blank">here</a>
+            The code can be checked after de-obfuscated (however there are still some codes that need to be tidied up so that they can still be read) <a href="https://gist.githubusercontent.com/sohay666/238c8bc117ee7ae30f04f73d74527f68/raw/5a0992bf47067d2404f687054b9d7afec8e6d413/js.malscript.dec" target="_blank">here</a>
+
+            Also, there are some functions that I skip. So I only discuss the important functions.
+            <img src="../../images/reversing-scam-interview-base-on-js-project/9.png" style="width: 780px;height: 380px;">
+            in the function <span>_0x3c0bfd</span> looks to get information like <span>hostname</span>, <span>platform</span>, <span>homedir</span> & <span>tmpdir</span> 
+            then initial host to <span>http://86.104.74.51:1224</span>
+            
+            I check the host, it has been created since the date <span>2024-03-28</span>
+
+            <img src="../../images/reversing-scam-interview-base-on-js-project/10.png" style="width: 780px;height: 580px;">
+
+            In addition, the obfuscated code will take sensitive data such as:
+
+            <span>1.</span><span>Wallet config Solana</span> (If you are a cryptocurrency player, you are already familiar with this)
+            <img src="../../images/reversing-scam-interview-base-on-js-project/11.png" style="width: 780px;height: 80px;">
+
+            <span>2.</span><span>Firefox</span> (Can steal password information stored in the Firefox browser)
+            <img src="../../images/reversing-scam-interview-base-on-js-project/12.png" style="width: 780px;height: 80px;">
+
+            <span>3.</span><span>Wallet Exodus</span> (wallet used to store crypto)
+            <img src="../../images/reversing-scam-interview-base-on-js-project/13.png" style="width: 780px;height: 80px;">
+
+            <span>4.</span><span>Keychain</span> (Like password management which can store information such as passwords, Mac users are certainly familiar with it)
+            <img src="../../images/reversing-scam-interview-base-on-js-project/14.png" style="width: 780px;height: 80px;">
+            
+            <span>5.</span><span>Chrome</span>  (can steal password information stored in the Chrome browser)
+            <img src="../../images/reversing-scam-interview-base-on-js-project/15.png" style="width: 780px;height: 80px;">
+
+            <span>6.</span> <span>Brave Browser</span> (can steal password information stored in the Brave browser)
+            <img src="../../images/reversing-scam-interview-base-on-js-project/16.png" style="width: 780px;height: 80px;">
+
+            <span>7.</span><span>App Data/Config App</span> (will steal some config info on each installed application)
+            <img src="../../images/reversing-scam-interview-base-on-js-project/17.png" style="width: 780px;height: 115px;">
+
+            then after getting the important information, it will be uploaded to the server <span>http://86.104.74.51:1224/uploads</span> 
+            with method http <span>POST</span>
+            <img src="../../images/reversing-scam-interview-base-on-js-project/18.png" style="width: 780px;height: 180px;">
+
+            <h1 id="dynamic-analysis" style="width: 180px;margin-left: 87px;">Dynamic Analysis</h1>
+            The first step, prepare VMware or a special environment to avoid attacks and change the host to localhost,
+            example : <span>http://86.104.74.51:1224</span> to <span>http://127.0.0.1:1224</span>, so after changed to localhost server.
+            don't forget to use <span>debugger</span>.
+
+            <img src="../../images/reversing-scam-interview-base-on-js-project/19.png" style="width: 780px;height: 75px;">
+
+            after that open <span>Chrome DevTools</span> with access <span>chrome://inspect</span> and click <span>Open dedicated DevTools for Node</span>
+            <img src="../../images/reversing-scam-interview-base-on-js-project/20.png" style="width: 780px;height: 175px;">
+            
+            After that, the console will automatically open like this, then click Step.
+            <img src="../../images/reversing-scam-interview-base-on-js-project/21.png" style="width: 780px;height: 275px;">
+            we can see the contents of each variable
+
+            <span style="color:#04ebf5">_0x1e3887</span>: <span>sohais-MacBook-Air.local</span> // hostname
+            <span style="color:#04ebf5">_0x20b1f0</span>: <span>darwin</span> // platform
+            <span style="color:#04ebf5">_0x4753a5</span>: <span>/Users/sohai</span> // homedir
+            <span style="color:#04ebf5">_0x171a9c</span>: <span>/var/folders/d_/865r6lh90g5cn8bcy1p99z6m0000gn/T</span> //tmpdir
+
+            after that, call function <span>_0x59c6d8</span> there is a platform checking, in this case I use is darwin
+            <img src="../../images/reversing-scam-interview-base-on-js-project/22.png" style="width: 780px;height: 275px;">
+
+            so, code will call request to URL <span>http://127.0.0.1:1224/client/5/507</span> because I set it to localhost, it should be 404
+            <img src="../../images/reversing-scam-interview-base-on-js-project/23.png" style="width: 780px;height: 75px;">
+
+            But if I changed the request directly with curl with the original host http://86.104.74.51:1224/client/5/507, 
+            the response are python code encoded using base64 with compressed zlib also using 50x iteration, and automatically executed.
+            <img src="../../images/reversing-scam-interview-base-on-js-project/24.png" style="width: 780px;height: 275px;">
+
+            the output from decode like this ( Next I will discuss each function )
+            <img src="../../images/reversing-scam-interview-base-on-js-project/26.png" style="width: 780px;height: 775px;">
+            as we can see that there are 3 main functions:
+            1. <span>download_payload</span>
+            2. <span>download_browse</span>
+            3. <span>download_mclip</span>
+
+            
+            which later, each function will request a file on the host <span>http://86.104.74.51:1224/</span> then will save the file in the homedir 
+            and execute it in the background.
+
+            1. <span>download_payload</span>
+               make a request URL <a target="_blank" href="http://86.104.74.51:1224/client/5/507">http://86.104.74.51:1224/client/5/507</a> file saved on <span>/homedir/.n2/pay</span> atau <span>/Users/sohai/.n2/pay</span> 
+               After that the file is executed. For the decode file, you can check it <a target="_blank" href="https://gist.githubusercontent.com/sohay666/8d413c8ddb46f1d22c2653fa3968b2b7/raw/5173903cb48e66f3995d05d4b7ecb14e4a578f1d/mal.download_payload.python">here</a>
+               
+               * There is something interesting, if the OS is Darwin then the code is immediately stopped / exited.
+            
+            2. <span>download_browse</span>
+               make a request URL  <span><a target="_blank" href="http://86.104.74.51:1224/brow/5/507">http://86.104.74.51:1224/brow/5/507</a></span> file di save pada <span>/homedir/.n2/bow</span> atau <span>/Users/sohai/.n2/bow</span> 
+               After that the file is executed. For the decode file, you can check it <a target="_blank" href="https://gist.githubusercontent.com/sohay666/454b946ce354aa4e67241904200bea33/raw/64c57e89ccdd0a1422e70a7e6a1e37e530f651bd/mal.download_browse.python">here</a>
+               if i checked the code, it's a <span style="color:red">malware</span> but it is unique enough to find the payload, because it is stored in the pastebin host randomly 
+               several URL lists are then XORed using the key <span style="color:red">!!!HappyPenguin1950!!!</span> as an example of pastebin <span>https://pastebin.com/raw/suEqUQBY</span> 
+               
+               <img src="../../images/reversing-scam-interview-base-on-js-project/34.png" style="width: 800px;height: 50px;">
+               if i XOR again the output is <span>http://23.254.229.101/cat-video</span> ( i created the decoder <a target="_blank" href="https://gist.githubusercontent.com/sohay666/f1abbcdc5bb82b0a32f8f3572791d346/raw/720708ef124683a472eabfb48330b20c805ea6a4/dec">here</a> )
+
+            3. <span>download_mclip</span>
+               make a request URL  <span><a target="_blank" href="http://86.104.74.51:1224/mclip/5/507">http://86.104.74.51:1224/mclip/5/507</a></span> file di save pada <span>/homedir/.n2/mlip</span> atau <span>/Users/sohai/.n2/mlip</span> 
+               After that the file is executed. For the decode file, you can check it <a target="_blank" href="https://gist.githubusercontent.com/sohay666/a3f2ed0aee5c00f71a84d8b4da7ef878/raw/68fd3e2b37b07c41500b39f2bc539e81f2339292/mal.download_mclip.python">here</a>
+               specially designed as a keylogger, if an application such as <span>chrome.exe & bold.exe</span> is running, it will record every keyboard stroke
+               then there is an ismnemonic check (this is specifically for crypto wallets) in other words, the attacker deliberately targets the crypto wallet then
+               all data will be sent to the host <span>http://95.164.7.171:8637/api/clip</span> using the POST method
+
+
+            go to debugger,
+            if the file is successfully downloaded. Then the payload will be saved in the file name <span>/Users/sohai/.sysinfo</span>
+            then it will execute the file <span>python3 /Users/sohai/.sysinfo</span>
+            <img src="../../images/reversing-scam-interview-base-on-js-project/27.png" style="width: 780px;height: 275px;">
+
+            after that the code will call the function <span>_0x4e6119()</span>, we can see it on the right tab 
+            The code successfully lists every application such as Chrome, Brave, Opera,
+            <img src="../../images/reversing-scam-interview-base-on-js-project/28.png" style="width: 780px;height: 295px;">
+            as well as several plugin extensions on Chrome such as:
+            <span>[
+                'nkbihfbeogaeaoehlefnkodbefgpgknn',
+                'ejbalbakoplchlghecdalmeeeajnimhm',
+                'fhbohimaelbohpjbbldcngcnapndodjp',
+                'ibnejdfjmmkpcnlpebklmnkoeoihofec',
+                'bfnaelmomeimhlpmgjnjophhpkkoljpa',
+                'aeachknmefphepccionboohckonoeemg',
+                'hifafgmccdpekplomjjkcfgodnhcellj',
+                'jblndlipeogpafnldhgmapagcccfchpi',
+                'acmacodkjbdgmoleebolmdjonilkdbch',
+                'dlcobpjiigpikoobohmabehhmhfoodbb',
+                'mcohilncbfahbmgdjkbpemcciiolgcge',
+                'agoakfejjabomempkjlepdflaleeobhb',
+                'omaabbefbmiijedngplfjmnooppbclkk',
+                'aholpfdialjgjfhomihkjbmgjidlcdno',
+                'nphplpgoakhhjchkkhmiggakijnkhfnd',
+                'penjlddjkjgpnkllboccdgccekpkcbin',
+                'lgmpcpglpngdoalbgeoldeajfclnhafa',
+                'fldfpgipfncgndfolcbkdeeknbbbnhcc',
+                'bhhhlbepdkbapadjdnnojkbgioiodbic',
+                'gjnckgkfmgmibbkoficdidcljeaaaheg',
+                'afbcbjpbpfadlkmhmclhkeeodmamcflc',
+            ]</span>
+            one of them is <span>metamask</span>.
+
+            there are several steps that I skip, such as (checking each profile until <span>200</span>)
+            <img src="../../images/reversing-scam-interview-base-on-js-project/29.png" style="width: 780px;height: 295px;">
+            example of iteration <span>71</span>
+            <img src="../../images/reversing-scam-interview-base-on-js-project/30.png" style="width: 780px;height: 295px;">
+            
+            
+            and after all the data has been successfully retrieved, finally all the files will be uploaded to the attacker's server.
+            in this case, I changed the original host to <span>http://127.0.0.1:1224</span>.
+            <img src="../../images/reversing-scam-interview-base-on-js-project/31.png" style="width: 780px;height: 295px;">
+            
+
+            From dynamic analysis, we can get the List API on host <span>86.104.74.51</span>
+
+            <span>1. GET http://86.104.74.51:1224/client/5/507</span> ( init dropper backdoor )
+            <span>2. POST http://86.104.74.51:1224/uploads</span>  ( upload logger )
+            <span>3. GET http://86.104.74.51:1224/brow/5/507</span>  ( dropper berupa malware )
+            <span>4. GET http://86.104.74.51:1224/mclip/5/507</span>  ( dropper berupa keylogger )
+            <span>5. GET http://86.104.74.51:1224/pdown</span>  ( download compailer python3 untuk windows )
+
+            then additional host <span>95.164.7.171</span> as a keylogger container
+            <span>1. POST http://95.164.7.171:8637/api/clip</span> (upload keylogger results)
+
+            List of open ports:
+            who knows, someone want to try hacking it back maybe . . .
+            <img src="../../images/reversing-scam-interview-base-on-js-project/32.png" style="width: 780px;height: 295px;">
+            <img src="../../images/reversing-scam-interview-base-on-js-project/33.png" style="width: 780px;height: 295px;">
+
+          
+            Conclusion, as developers we must always be careful when someone we don't know runs a program,
+            even though it looks like an interview question. And always check the library that we use, maybe the library that we use is also not safe.
+            <a href="https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610" target="_blank">dependency-confusion</a>
+
+            and thank you to those of you who took the time to read this article.
+        </pre>
+    </div>
+  </div>
+
+</br>
+  <footer id="footer">
+    <div class="footer-left">
+      Copyright &copy; 2019 sohay666
+    </div>
+  </footer>
+
+</body>
+</html>
