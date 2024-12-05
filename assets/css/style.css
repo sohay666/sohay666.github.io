@@ -25,6 +25,21 @@ pre {font-family:Courier,Monospace;}
 .style6 {color: #003300}
 .style8 {color: #33CC00}
 
+.language-section{
+  margin-left: 87px;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .style2 {color: #00FF00;font-size: 9px;}
+  .style3 {color: #009900;font-size: 9px;}
+  .style4 {color: #006600;font-size: 9px;}
+  .style5 {color: #00CC00;font-size: 9px;}
+  .style6 {color: #003300;font-size: 9px;}
+  .style8 {color: #33CC00;font-size: 9px;}
+  .hide-component{ display: none;}
+}
+
 
 #footer {
   margin-bottom: 10px;

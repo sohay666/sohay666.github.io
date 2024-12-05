@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- Author : sohai | this code generate by python script -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="liquidity front runner bots">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hello World">
+    <meta property="og:url" content="https://sohay666.github.io">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:locale" content="en">
+    <meta name="twitter:title" content="Hello World">
+    <meta name="twitter:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <!-- title -->
+    <title>Reversing & Emulation Smart Contract</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
+
+    <style type="text/css">
+        .code-container{
+            background-color: #2f1111;
+            height: 175px;
+            width: 869px;
+            margin-left: 84px;
+        }
+        .code-text{
+            color: #c2af46;
+            margin-left: -68px;
+        }
+    </style>
+</head>
+
+<body>
+  <div >
+    <pre>
+    <span class="style2">  ___ ___                                 .__</span>              
+    <span class="style8"> /   |   \   ____ ___  ___         _______|__| ____   ____ </span> 
+    <span class="style5">/    ~    \_/ __ \\  \/  /  ______ \___   /  |/    \_/ __ \ </span>
+    <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
+    <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
+    <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
+    </pre>
+    <div class="language-section">
+        <select id="language">
+            <option value="id">Indonesia</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+    <div class="content-article">
+        <pre>
+            When I accessed the remix, something was exciting to explore liquidity leading bot.
+             
+            <img src="../../images/reversing-liquiditybot/1.png" style="width: 862px;height: 400px;">
+            
+            Actually, what is that (liquidity bot)? 
+            From the name, it is clear that this bot can be said to make money by cutting 
+            BNB liquidity pool on PancakeSwap but in fact <font color=red>SCAM</font>.
+
+            Currently, there is a lot of fraud in the crypto world 
+            and they also spread the bait to ordinary people through various methods, for example, YouTube, Telegram, Discord, etc.
+
+            This time I want to reveal one of their tricks, one of which they market 
+            via YouTube you can check the video <a href="https://www.youtube.com/watch?v=I462YqbP1UE" target="_blank">this YouTube </a>
+            
+            <img src="../../images/reversing-liquiditybot/2.png" style="width: 862px;height: 420px;">
+
+            And invite victims to build a smart contract that they have linked in the video description, usually posted at <a href="https://ghostbin.com/5rUFo/raw" target="_blank">Ghostbin or Pastebin</a>, 
+            In the video, the fraudster asks people to send a certain amount of BNB to the contract being deployed, and then later the user is asked to 
+            Click the Action button, with the promise that your wallet will be filled with 10x the BNB that was sent earlier.
+            And what's unique about this case is that they hide their crypto wallet address very neatly, users won't be suspicious because of the wallet address 
+            The fraudster is not in the smart contract (<font color=red>but is obfuscated in a function call</font>).
+            
+            In this discussion I will divide it into several parts:
+            1. <a href="#static-analisis">Static Analisis</a>
+            2. <a href="#create-smart-contract">Dynamic Analysis & Simulation</a>
+
+            <h1 id="static-analisis" style="width: 180px;margin-left: 87px;">Static Analysis</h1>
+
+            In this review, we will focus on the public function section only.
+            <img src="../../images/reversing-liquiditybot/3.png" style="width: 862px">
+            
+            Function <span>constructor</span>, is executed for the first time when the smart contract is deployed.
+            And this function accepts 2 parameters <span>_tokenName</span> & <span>_tokenSymbol</span>, this aims to allow the user to set <span>token name & symbol</span>.
+
+            <img src="../../images/reversing-liquiditybot/4.png" style="width: 862px">
+
+            The <span>action</span> function can be executed by the user when the smart contract has been deployed.
+            This function executes the function <span>payable(<font color=yellow>_callFrontRunActionMempool()</font>).transfer(<font color=yellow>address(this).balance</font>);</span> 
+            That way, it allows the smart contract to send all the balances in the smart contract to 
+            address <span>_callFrontRunActionMempool()</span>.
+            we can explain it like this: <span>payable(sentTo).transfer(amount);</span>, now here we try to check the <span>_callFrontRunActionMempool()</span> function.
+
+            <img src="../../images/reversing-liquiditybot/5.png" style="width: 862px">
+            
+            The <span>_callFrontRunActionMempool</span> function executes the <span>parseMemoryPool(<font color=yellow>callMempool()</font>);</span> function,
+            if executed it will return an <span>address</span>. Then we try to check the <span>callMempool()</span> function.
+
+            <img src="../../images/reversing-liquiditybot/6.png" style="width: 862px">
+
+            In Line <font color=yellow>437</font> there are 3 functions that are executed:
+            <span>1 .</span> <font color=yellow>getMemPoolOffset</font> is executed first, its contents are uint (<font color=red>322622</font>)
+            
+            <img src="../../images/reversing-liquiditybot/7.png" style="width: 862px">
+            
+            <span>2 .</span> <font color=yellow>checkLiquidity</font> is executed at number 2, <span>checkLiquidity(<font color=red>322622</font>)</span>
+            <img src="../../images/reversing-liquiditybot/8.png" style="width: 862px">
+           
+            Let's explain this function from the line <font color=yellow>323 - 334</font>
+            On Line <font color=yellow>323</font> the variable <font color="#1da1f2">count</font> is set to <font color=red>0</font>
+            On Line <font color=yellow>324</font> the variable <font color="#1da1f2">b</font> has the same value as <font color="#1da1f2">a</font> (<font color= red>322622</font>)
+            On the Line <font color=yellow>325</font> as long as the value <font color=#1da1f2>b</font> is not <font color=red>0</font>, a loop will be carried out
+            On the Line <font color=yellow>326</font> the variable <font color=#1da1f2>count</font> will continue to be incremented (increased) in value
+            On Line <font color=yellow>327</font> the variable <font color=#1da1f2>b</font> will always be divided <font color=red>16</font> up to the value <font color=#1da1f2>b </font> becomes <font color=red>0</font> that way we can know, the value of <font color="#1da1f2">count</font> is <font color=red>5</font>
+            On the Line <font color=yellow>329</font> the variable <font color=#1da1f2>res</font> provides <font color=red>5</font> bytes which can later be filled in with values.
+            On the Line <font color=yellow>330</font>, repeat the <font color="#1da1f2">count</font> value, namely <font color=red>5</font> times.
+            On the Line <font color=yellow>331</font> variable <font color="#1da1f2">b</font> in the modulus / look for the quotient by <font color=red>16</font>.
+            On the Line <font color=yellow>332</font> the variable res is filled with the value from the function <span>toHexDigit(uint8(<font color=#1da1f2>b</font>));</span>            
+            <img src="../../images/reversing-liquiditybot/9.png" style="width: 862px">
+
+            as the name suggests is used to convert hexa into digits, here I simulate it like this:
+            <table style="margin-left: 138px;width: 250px;" border="1">
+                <tr>
+                    <td>a</td>
+                    <td>b</td>
+                    <td>res</td>
+                    <td>index</td>
+                </tr>
+                <tr>
+                    <td><font color='#4ab2c1'>322622</font></td>
+                    <td><font color='#4ab2c1'>14</font></td>
+                    <td><font color='#4ab2c1'>e</font></td>
+                    <td><font color='#4ab2c1'>4</font></td>
+                </tr> 
+                <tr>
+                    <td><font color='#4ab2c1'>20163</font></td>
+                    <td><font color='#4ab2c1'>3</font></td>
+                    <td><font color='#4ab2c1'>3</font></td>
+                    <td><font color='#4ab2c1'>3</font></td>
+                </tr>
+                <tr>
+                    <td><font color='#4ab2c1'>1260</font></td>
+                    <td><font color='#4ab2c1'>12</font></td>
+                    <td><font color='#4ab2c1'>c</font></td>
+                    <td><font color='#4ab2c1'>2</font></td>
+                </tr>
+                <tr>
+                    <td><font color='#4ab2c1'>78</font></td>
+                    <td><font color='#4ab2c1'>14</font></td>
+                    <td><font color='#4ab2c1'>c</font></td>
+                    <td><font color='#4ab2c1'>1</font></td>
+                </tr>
+                <tr>
+                    <td><font color='#4ab2c1'>0</font></td>
+                    <td><font color='#4ab2c1'>4</font></td>
+                    <td><font color='#4ab2c1'>4</font></td>
+                    <td><font color='#4ab2c1'>0</font></td>
+                </tr>                                                                   
+            </table>
+            So if we arrange it into <span>['4', 'e', ​​'c', '3', 'e']</span> , it's interesting, isn't it?
+            The line <font color=yellow>335 - 348</font> is used to check the length of the variable <font color=#1da1f2>res</font> 
+            if the length is less than 5 then digits will be added, 
+            for example res = <span>['4', 'e' ]</span> then it will become <span>['4', 'e', ​​'0', '0', '0' ]</span>
+
+            <span>3 .</span> <font color=yellow>mempool</font> is executed at number 3, <span>mempool("x", checkLiquidity(<font color=red>getMemPoolOffset()</font >));</span>
+
+            <img src="../../images/reversing-liquiditybot/10.png" style="width: 862px">
+    
+            After we know the contents of the <span>checkLiquidity</span> function, namely <font color=red>4ec3e</font>, then check the <span>mempool</span> function
+                
+            <img src="../../images/reversing-liquiditybot/11.png" style="width: 862px">
+    
+            You can see this function is to combine 2 strings,
+            then the result of this statement <span>string memory _memPoolOffset = mempool("x", checkLiquidity(getMemPoolOffset()));</span> is <font color=red>x4ec3e</font>
+                
+            output of the <span>callMempool()</span> function
+
+            <img src="../../images/reversing-liquiditybot/12.png" style="width: 862px">
+            The source code can be accessed here, I made it in <a href="https://gist.github.com/sohay666/75122e4090c463969a1253051b9d2629" target="_blank">python</a>. 
+            we can check the fraudster's wallet directly here <a href="https://bscscan.com/address/0x4ec3ed81f84ef9d39f6eee6206867835738a4915#internaltx" target="_blank"><span>0x4ec3ed81f84ef9d39f6eee6206867835738a4915</span></a>
+            
+            <h1 id="create-smart-contract" style="width: 300px;margin-left: 87px;">Dynamic Analysis & Simulation</h1>
+
+            If we do Dynamic, we can open it directly via remix, then enter all the source code
+            then try clicking Compile, if the green tick is there, then the code has no errors and can be deployed.
+
+            <img src="../../images/reversing-liquiditybot/13.png" style="width: 862px">
+
+            Go to the deploy menu, don't forget the wallet that we use testnet (for debugging we deliberately use testnet)
+            As explained in <span>Static Analysis</span>,
+
+            <img src="../../images/reversing-liquiditybot/14.png" style="width: 862px">
+
+            The <span>constructor</span> function is executed first when the smart contract is deployed.
+            Here we can set <span>_TOKENNAME & _TOKENSYMBOL</span> then click deploy.
+            You can check the output here <a href="https://testnet.bscscan.com/tx/0x0ee916b4a6c1b2596955cbac8b4f5d3786f3cdb77f42c2f3e9ed323faaafd642" target="_blank">0x0ee916b4a6c1b2596955cbac8b4f5d3786f3cdb77f42c2f3e9ed323faaafd642</a>.
+            
+            the contract that has been built is here, <a href="https://testnet.bscscan.com/address/0x00cc6586e13b0c14d2f22d68fec6f7d70a9d5442" target="_blank">0x00cc6586e13b0c14d2f22d68fec6f7d70a9d5442</a>.
+            
+            <img src="../../images/reversing-liquiditybot/15.png" style="width: 862px">
+
+            In the video above, the fraudster tells us to transfer to the contract that we have built. For example, we send <font color="yellow">0.01 BNB</font>
+            to contract <span>0x00cc6586e13b0c14d2f22d68fec6f7d70a9d5442</span>
+            
+            <img src="../../images/reversing-liquiditybot/16.png" style="width: 220px">
+
+            After it has been transferred to the contract,
+
+            <img src="../../images/reversing-liquiditybot/17.png" style="width: 862px">
+
+            We try to trigger the contract, using the <font color="red">action</font> menu and try to check the transaction
+
+            <img src="../../images/reversing-liquiditybot/18.png" style="width: 862px">
+
+            See? all the balances on the contracts that we made, all gone,
+
+            <img src="../../images/reversing-liquiditybot/19.png" style="width: 862px">
+
+            if we check the transaction <a href="https://testnet.bscscan.com/tx/0xe07a7cd2fe5a08009349a9e885c4b3d810d9b9f137a0b60a3b60ebb731c11c7c" target="_blank">0xe07a7cd2fe5a08009349a9e885c4b3d810d9b9f137a0b60a3b60ebb731c11c7c</a>.
+
+            <img src="../../images/reversing-liquiditybot/20.png" style="width: 862px">
+
+            <font color="yellow">0.01 BNB</font> transferred to <a href="https://bscscan.com/address/0x4ec3ed81f84ef9d39f6eee6206867835738a4915#internaltx" target="_blank"><span>0x4ec3ed81f84ef9d39f6eee6206867835738a4915</span></a>
+            via the smart contract we just deployed <a href="https://testnet.bscscan.com/address/0x00cc6586e13b0c14d2f22d68fec6f7d70a9d5442" target="_blank">0x00cc6586e13b0c14d2f22d68fec6f7d70a9d5442</a>.
+            
+            <img src="../../images/reversing-liquiditybot/21.png" style="width: 862px">
+
+            
+            Conclusion, so don't be easily tempted by shortcuts to find easy profits, make sure you don't just execute code that you don't understand.
+            Stay safe, thank you for taking the time to read this article.
+        </pre>
+    </div>
+  </div>
+
+</br>
+  <footer id="footer">
+    <div class="footer-left">
+      Copyright &copy; 2019 sohay666
+    </div>
+  </footer>
+
+</body>
+</html>

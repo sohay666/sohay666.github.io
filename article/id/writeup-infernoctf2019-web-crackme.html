@@ -9,7 +9,7 @@
     <meta name="description" content="An software engineer guy who loves write code and learn about security & reversing">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Hello World">
-    <meta property="og:url" content="https://sohainewbie.github.io">
+    <meta property="og:url" content="https://sohay666.github.io">
     <meta property="og:site_name" content="">
     <meta property="og:description" content="An software engineer guy who loves write code and learn about security & reversing">
     <meta property="og:locale" content="en">
@@ -18,7 +18,8 @@
     <!-- title -->
     <title>Writeup Infernoctf 2019 web crackme</title>
     <!-- styles -->
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
 
     <style type="text/css">
         .code-container{
@@ -47,13 +48,19 @@
     <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
     <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
     <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
-    </pre>    
+    </pre>
+    <div class="language-section">
+        <select id="language">
+            <option value="id">Indonesia</option>
+            <option value="en">English</option>
+        </select>
+      </div>    
     <div class="content-article">
         <pre>
             Pada chall infernoctf2019 ini, saya mencoba untuk menyelesaikan challange Web Crackme dengan point <font color="yellow">399</font>.
             kita buka ke halaman web nya 
 
-            <img src="../images/infernoctf2019/webcrack/1.png" style="width: 862px;height: 400px;">
+            <img src="../../images/infernoctf2019/webcrack/1.png" style="width: 862px;height: 400px;">
 
 
             kita bisa lihat terdapat beberapa script yang di load namun kita fokus ke 3 file 
@@ -315,12 +322,12 @@
 
             untuk membuktikan nya kita coba load module tadi via console
 
-            <img src="../images/infernoctf2019/webcrack/2.png" style="width: 862px">
-            <img src="../images/infernoctf2019/webcrack/3.png" style="width: 862px">
+            <img src="../../images/infernoctf2019/webcrack/2.png" style="width: 862px">
+            <img src="../../images/infernoctf2019/webcrack/3.png" style="width: 862px">
 
             kita coba ambil variable finalres, nilai nya sama <font color='#4ab2c1'>665579592d4d6539</font>
 
-            <img src="../images/infernoctf2019/webcrack/4.png" style="width: 862px">
+            <img src="../../images/infernoctf2019/webcrack/4.png" style="width: 862px">
 
             kemudian langkah terakhir adalah kita mencoba untuk mendecode nilai hex tersebut,
             saya membuat sebuah snipet code seperti ini
@@ -335,11 +342,11 @@
 
             kemudian kita coba run code tersebut
 
-            <img src="../images/infernoctf2019/webcrack/5.png" style="width: 862px">
+            <img src="../../images/infernoctf2019/webcrack/5.png" style="width: 862px">
 
             dan kita coba input flag tersebut <font color='#4ab2c1'>infernoCTF{fUyY-Me9}</font>
 
-            <img src="../images/infernoctf2019/webcrack/6.png" style="width: 862px">
+            <img src="../../images/infernoctf2019/webcrack/6.png" style="width: 862px">
 
             Sekain dan terimakasih karena meluangkan waktu untuk membaca artikel ini :)
         </pre>
@@ -349,7 +356,7 @@
 </br>
   <footer id="footer">
     <div class="footer-left">
-      Copyright &copy; 2019 sohainewbie
+      Copyright &copy; 2019 sohay666
     </div>
   </footer>
 

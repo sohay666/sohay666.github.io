@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- Author : sohai | this code generate by python script -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hello World">
+    <meta property="og:url" content="https://sohay666.github.io">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <meta property="og:locale" content="en">
+    <meta name="twitter:title" content="Hello World">
+    <meta name="twitter:description" content="An software engineer guy who loves write code and learn about security & reversing">
+    <!-- title -->
+    <title>Reversing & Emulation Smart Contract</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/utils.js"></script>
+
+    <style type="text/css">
+        .code-container{
+            background-color: #2f1111;
+            height: 175px;
+            width: 869px;
+            margin-left: 84px;
+        }
+        .code-text{
+            color: #c2af46;
+            margin-left: -68px;
+        }
+    </style>
+</head>
+
+<body>
+  <div >
+    <pre>
+    <span class="style2">  ___ ___                                 .__</span>              
+    <span class="style8"> /   |   \   ____ ___  ___         _______|__| ____   ____ </span> 
+    <span class="style5">/    ~    \_/ __ \\  \/  /  ______ \___   /  |/    \_/ __ \ </span>
+    <span class="style3">\    Y    /\  ___/ >    <  /_____/  /    /|  |   |  \  ___/ </span>
+    <span class="style4"> \___|_  /  \___  >__/\_ \         /_____ \__|___|  /\___  ></span>
+    <span class="style6">       \/       \/      \/               \/       \/     \/ </span>
+    </pre>
+    <div class="language-section">
+      <select id="language">
+          <option value="id">Indonesia</option>
+          <option value="en">English</option>
+      </select>
+    </div>
+    <div class="content-article">
+        <pre>
+          This time I want to share, how to create a smart contract on the Ethereum blockchain, 
+          then reverse EVM bytecode & simulation using Qiling.
+
+          I made it into several parts:
+            1. <a href="#create-smart-contract">Deploy Smart Contract</a>
+            2. <a href="#reverse-smart-contract">Reversing Smart Contract</a>
+            3. <a href="#simulate-smart-contract">Simulate Smart Contract</a>
+
+            <h1 id="create-smart-contract" style="width: 238px;margin-left: 87px;">Deploy Smart Contract</h1>
+
+            Before starting, let's try to build the smart contract using Solidity.
+            You can open a browser on the page <span>https://remix.ethereum.org/</span>
+
+            <img src="../../images/reversing-smartcontract/1.png" style="width: 862px;height: 400px;">
+            
+            You can also change the workspace name, here I created a smart contract with the name Hello.
+            Then in the contracts folder, create a new file, for example: hello.sol 
+            input <a href="https://gist.github.com/sohay666/2f8ca519bc5c115682f31c90cd3f407e" target="_blank">this code :</a>
+
+            <img src="../../images/reversing-smartcontract/2.png" style="width: 862px;">
+
+            To check that the code is running properly & correctly, you can use compile.
+            Don't forget to adjust the solidity compiler to version 0.6.0 too.
+            If the output is like this, and there are no errors, then the code written is correct.
+
+            <img src="../../images/reversing-smartcontract/3.png" style="width: 862px;">
+
+            Every time we build a smart contract we need ETH as a gas fee.
+            Since we are making it for learning, we can use the testnet version, that way we don't need to spend real ETH.
+            
+            First, create an ethereum wallet that can use Metamask, then set the network to Ropsten Test Network.
+            
+            <img src="../../images/reversing-smartcontract/4.png" style="width: 220px;">
+
+            Then, set ENVIRONMENT to Injected Web3 then click <span>DEPLOY</span>
+
+            <img id="deploy" src="../../images/reversing-smartcontract/5.png" style="width: 862px">
+
+            After deploying the contract, you can check the transaction here <a href="https://ropsten.etherscan.io/tx/0xcb49a080e18347c61b47e63c626040a69e2bbfa6e8cebc5505afbb405f775a1d" target="_blank">0xcb49a080e18347c61b47e63c626040a69e2bbfa6e8cebc5505afbb405f775a1d</a>
+
+            <img src="../../images/reversing-smartcontract/6.png" style="width: 862px">
+
+            In the <span>Input Data</span> section there is EVM bytecode (VM level machine language). We can imagine this level of code certainly not 
+            for humans to read is the same as low-level machine code. It can be compiled with high-level EVM language.
+
+            <h1 id="reverse-smart-contract" style="width: 245px;margin-left: 87px;">Reverse Smart Contract</h1>
+
+            After we have successfully deployed the contract <span>Hello</span>, the contract bytecode can be checked at this address <a href="https://ropsten.etherscan.io/address/0xfcfabb546bcf515c4f518b3e5f44f7838d781514#code" target="_blank">0xfcfabb546bcf515c4f518b3e5f44f7838d781514</a>
+
+            <img src="../../images/reversing-smartcontract/7.png" style="width: 862px">
+
+            To read EVM bytecode directly is very difficult, therefore there are several decompilers, one of which we can use 
+            is <a href="https://github.com/palkeo/panoramix" target="_blank">panoramix</a>. With this decompiler it will convert bytecode into python psudocode.
+
+            run the command <span>panoramix 0x608060405234801561001057600080fd...</span>
+
+            <img src="../../images/reversing-smartcontract/8.png" style="width: 862px">
+
+
+            In the picture there are 3 objects:
+            1. <span>storage</span> contract
+            2. <span>_fallback</span> function, this function is executed when the contract is called with a signature function that is not defined in the code.
+            3. The <span>unknown5dbb8d50</span> function will be executed when <span>0x5dbb8d50</span> signature is called, 
+               and we can confirm that the function is <span>setFullname</span> after it becomes bytecode.
+ 
+            You can see that the constructor function is not readable when we deploy it 
+            In the contract, the constructor function has been called for the first time before <a href="#deploy">deploy</a> and you can also check the <a section href="https://ropsten.etherscan.io/tx/0xcb49a080e18347c61b47e63c626040a69e2bbfa6e8cebc5505afbb405f775a1d#statechange" target="_blank">statechange</a>
+            
+            <img src="../../images/reversing-smartcontract/9.png" style="width: 862px">
+           
+           <h1 id="simulate-smart-contract" style="width: 259px;margin-left: 87px;">Simulate Smart Contract</h1>
+
+           To simulate this time I used a python framework called <a href="https://docs.qiling.io/en/latest/evm/" target="_blank">Qiling</a>
+           with the help of Qiling we can simulate EVM easily.
+
+           Create a python file, the source code can be checked here <a href="https://gist.github.com/sohay666/f0e257220323d7ab4fe1fb7d9ab711cc" target="_blank">hello.py</a>
+
+           <!-- <img src="../../images/reversing-smartcontract/10.png" style="width: 862px"> -->
+
+           let's discuss the code snippet, this line of code we import the qiling library.
+
+           <img src="../../images/reversing-smartcontract/10.png" style="width: 862px">
+
+           This line of code loads the smart contract bytecode <span>hello</span> to use the arch type <span>Ethereum Virtual Machine (EVM)</span>
+           
+           <img src="../../images/reversing-smartcontract/11.png" style="width: 862px">
+
+           With this line of code, we create a wallet & set balance to the account, and build the smart contract.
+           Then print the address.
+
+           <img src="../../images/reversing-smartcontract/12.png" style="width: 862px">
+
+           In this line of code, we are trying to call the function <span>0x5dbb8d50</span> by sending the parameter "<span>Wildcat</span>"
+           then print the output.
+           <img src="../../images/reversing-smartcontract/13.png" style="width: 862px">
+
+           If we execute the result like this:
+           <img src="../../images/reversing-smartcontract/14.png" style="width: 862px">
+
+
+           In conclusion, we can interact directly with EVM bytecode using Qiling 
+           and this is just a simple example, next time maybe I can share more about the uses of qiling.
+           Thank you for reading.
+        </pre>
+    </div>
+  </div>
+
+</br>
+  <footer id="footer">
+    <div class="footer-left">
+      Copyright &copy; 2019 sohay666
+    </div>
+  </footer>
+
+</body>
+</html>
